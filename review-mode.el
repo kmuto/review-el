@@ -101,7 +101,7 @@
 
     (defcustom review-font-lock-keywords
 	`(("◆→[^◆]*←◆" . review-mode-comment-face)
-	  ("#@#.*" . review-mode-comment-face)
+	  ("^#@.*" . review-mode-comment-face)
 	  ("^=.*" . review-mode-title-face)
 	  ("@<tt>{.*?}" . review-mode-underline-face)
 	  ("@<ttbold>{.*?}" . review-mode-underlinebold-face)
