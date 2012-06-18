@@ -137,7 +137,7 @@
       "タイトルのフェイス"
       :group 'review-mode)
     (defface review-mode-header1-face
-      '((t (:bold t :foreground "goldenrod")))
+      '((t (:bold t :foreground "darkgoldenrod")))
       "ヘッダーのフェイス"
       :group 'review-mode)
     (defface review-mode-header2-face
@@ -145,7 +145,7 @@
       "ヘッダーのフェイス"
       :group 'review-mode)
     (defface review-mode-header3-face
-      '((t (:bold t :foreground "red")))
+      '((t (:bold t :foreground "firebrick")))
       "ヘッダーのフェイス"
       :group 'review-mode)
     (defface review-mode-header4-face
