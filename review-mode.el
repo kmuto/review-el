@@ -153,7 +153,7 @@
       "ヘッダーのフェイス"
       :group 'review-mode)
     (defface review-mode-header5-face
-      '((t (:bold t :foreground "cabetblue")))
+      '((t (:bold t :foreground "cadetblue")))
       "ヘッダーのフェイス"
       :group 'review-mode)
     (defface review-mode-underline-face
