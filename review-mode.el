@@ -102,6 +102,7 @@
     (defcustom review-font-lock-keywords
 	`(("◆→[^◆]*←◆" . review-mode-comment-face)
 	  ("^#@.*" . review-mode-comment-face)
+	  ("^======.*" . review-mode-header5-face)
 	  ("^=====.*" . review-mode-header4-face)
 	  ("^====.*" . review-mode-header3-face)
 	  ("^===.*" . review-mode-header2-face)
@@ -144,11 +145,15 @@
       "ヘッダーのフェイス"
       :group 'review-mode)
     (defface review-mode-header3-face
-      '((t (:bold t :foreground "blue")))
+      '((t (:bold t :foreground "red")))
       "ヘッダーのフェイス"
       :group 'review-mode)
     (defface review-mode-header4-face
-      '((t (:bold t :foreground "goldenrod")))
+      '((t (:bold t :foreground "forestgreen")))
+      "ヘッダーのフェイス"
+      :group 'review-mode)
+    (defface review-mode-header5-face
+      '((t (:bold t :foreground "cabetblue")))
       "ヘッダーのフェイス"
       :group 'review-mode)
     (defface review-mode-underline-face
@@ -190,6 +195,7 @@
     (defvar review-mode-header2-face 'review-mode-header2-face)
     (defvar review-mode-header3-face 'review-mode-header3-face)
     (defvar review-mode-header4-face 'review-mode-header4-face)
+    (defvar review-mode-header5-face 'review-mode-header5-face)
     (defvar review-mode-underline-face 'review-mode-underline-face)
     (defvar review-mode-bold-face 'review-mode-bold-face)
     (defvar review-mode-italic-face 'review-mode-italic-face)
