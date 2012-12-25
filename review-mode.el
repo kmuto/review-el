@@ -123,6 +123,17 @@
 	  ("^//.*]" . review-mode-hide-face)
 	  ("^//}" . review-mode-hide-face)
 	  ("<\<>" . review-mode-bracket-face)
+	  ("－" . review-mode-fullwidth-hyphen-minus-face)
+	  ("−" . review-mode-minus-sign-face)
+	  ("‐" . review-mode-hyphen-face)
+	  ("‒" . review-mode-figure-dash-face)
+	  ("–" . review-mode-en-dash-face)
+	  ("—" . review-mode-em-dash-face)
+	  ("―" . review-mode-horizontal-bar-face)
+	  ("“" . review-mode-left-quote-face)
+	  ("”" . review-mode-right-quote-face)
+	  ("‟" . review-mode-reversed-quote-face)
+	  ("″" . review-mode-double-prime-face)
 	  )
 	"編集モードのface"
 	:group 'review-mode
@@ -188,6 +199,50 @@
       '((t (:foreground "CornflowerBlue")))
       "balloonのフェイス"
       :group 'review-mode)
+    (defface review-mode-fullwidth-hyphen-minus-face
+      '((t (:foreground "grey90" :bkacground "red")))
+      "全角ハイフン/マイナスのフェイス"
+      :group 'review-mode)
+    (defface review-mode-minus-sign-face
+      '((t (:background "grey90")))
+      "全角ハイフン/マイナスのフェイス"
+      :group 'review-mode)
+    (defface review-mode-hyphen-face
+      '((t (:background "maroon1")))
+      "全角ハイフンのフェイス"
+      :group 'review-mode)
+    (defface review-mode-figure-dash-face
+      '((t (:foreground "white" :background "firebrick")))
+      "figureダッシュ(使うべきでない)のフェイス"
+      :group 'review-mode)
+    (defface review-mode-en-dash-face
+      '((t (:foreground "white" :background "sienna")))
+      "半角ダッシュ(使うべきでない)のフェイス"
+      :group 'review-mode)
+    (defface review-mode-em-dash-face
+      '((t (:background "honeydew1")))
+      "全角ダッシュのフェイス"
+      :group 'review-mode)
+    (defface review-mode-horizontal-bar-face
+      '((t (:background "LightSkyBlue1")))
+      "水平バーのフェイス"
+      :group 'review-mode)
+    (defface review-mode-left-quote-face
+      '((t (:foreground "medium sea green")))
+      "開き二重引用符のフェイス"
+      :group 'review-mode)
+    (defface review-mode-right-quote-face
+      '((t (:foreground "LightSlateBlue")))
+      "閉じ二重引用符のフェイス"
+      :group 'review-mode)
+    (defface review-mode-reversed-quote-face
+      '((t (:foreground "LightCyan" :background "red")))
+      "開き逆二重引用符(使うべきでない)のフェイス"
+      :group 'review-mode)
+    (defface review-mode-double-prime-face
+      '((t (:foreground "light steel blue" :background "red")))
+      "閉じ逆二重引用符(使うべきでない)のフェイス"
+      :group 'review-mode)
 
     (defvar review-mode-comment-face 'review-mode-comment-face)
     (defvar review-mode-title-face 'review-mode-title-face)
@@ -203,6 +258,17 @@
     (defvar review-mode-hide-face 'review-mode-hide-face)
     (defvar review-mode-nonhide-face 'review-mode-nonhide-face)
     (defvar review-mode-balloon-face 'review-mode-balloon-face)
+    (defvar review-mode-fullwidth-hyphen-minus-face 'review-mode-fullwidth-hyphen-minus-face)
+    (defvar review-mode-minus-sign-face 'review-mode-minus-sign-face)
+    (defvar review-mode-hyphen-face 'review-mode-hyphen-face)
+    (defvar review-mode-figure-dash-face 'review-mode-figure-dash-face)
+    (defvar review-mode-en-dash-face 'review-mode-en-dash-face)
+    (defvar review-mode-em-dash-face 'review-mode-em-dash-face)
+    (defvar review-mode-horizontal-bar-face 'review-mode-horizontal-bar-face)
+    (defvar review-mode-left-quote-face 'review-mode-left-quote-face)
+    (defvar review-mode-right-quote-face 'review-mode-right-quote-face)
+    (defvar review-mode-reversed-quote-face 'review-mode-reversed-quote-face)
+    (defvar review-mode-double-prime-face 'review-mode-double-prime-face)
 
     (make-local-variable 'font-lock-defaults)
     (setq font-lock-defaults '(review-font-lock-keywords t))
