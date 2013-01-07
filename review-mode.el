@@ -96,6 +96,9 @@
     (auto-fill-mode 0)
     (if review-use-skk-mode (skk-mode))
 
+    (make-local-variable 'comment-start)
+    (setq comment-start "#@#")
+
     ;; フェイス
     (require 'font-lock)
 
@@ -108,16 +111,37 @@
 	  ("^===.*" . review-mode-header2-face)
 	  ("^==.*" . review-mode-header1-face)
 	  ("^=.*" . review-mode-title-face)
+	  ("@<list>{.*?}" . review-mode-ref-face)
+	  ("@<img>{.*?}" . review-mode-ref-face)
+	  ("@<table>{.*?}" . review-mode-ref-face)
+	  ("@<fn>{.*?}" . review-mode-ref-face)
+	  ("@<chap>{.*?}" . review-mode-ref-face)
+	  ("@<title>{.*?}" . review-mode-ref-face)
+	  ("@<chapref>{.*?}" . review-mode-ref-face)
+	  ("@<u>{.*?}" . review-mode-underline-face)
 	  ("@<tt>{.*?}" . review-mode-underline-face)
 	  ("@<ttbold>{.*?}" . review-mode-underlinebold-face)
+	  ("@<ttb>{.*?}" . review-mode-bold-face)
 	  ("@<b>{.*?}" . review-mode-bold-face)
+	  ("@<strong>{.*?}" . review-mode-bold-face)
+	  ("@<em>{.*?}" . review-mode-bold-face)
 	  ("@<kw>{.*?}" . review-mode-bold-face)
+	  ("@<bou>{.*?}" . review-mode-bold-face)
+	  ("@<ami>{.*?}" . review-mode-bold-face)
 	  ("@<i>{.*?}" . review-mode-italic-face)
 	  ("@<tti>{.*?}" . review-mode-italic-face)
 	  ("@<sup>{.*?}" . review-mode-italic-face)
 	  ("@<sub>{.*?}" . review-mode-italic-face)
+	  ("@<ruby>{.*?}" . review-mode-italic-face)
 	  ("@<idx>{.*?}" . review-mode-nothide-face)
 	  ("@<hidx>{.*?}" . review-mode-hide-face)
+	  ("@<br>{.*?}" . review-mode-bold-face)
+	  ("@<m>{.*?}" . review-mode-bold-face)
+	  ("@<icon>{.*?}" . review-mode-bold-face)
+	  ("@<uchar>{.*?}" . review-mode-bold-face)
+	  ("@<href>{.*?}" . review-mode-bold-face)
+	  ("@<raw>{.*?[^\\]}" . review-mode-bold-face)
+	  ("@<code>{.*?[^\\]}" . review-mode-bold-face)
 	  ("@<balloon>{.*?}" . review-mode-ballon-face)
 	  ("^//.*{" . review-mode-hide-face)
 	  ("^//.*]" . review-mode-hide-face)
@@ -199,6 +223,10 @@
       '((t (:foreground "CornflowerBlue")))
       "balloonのフェイス"
       :group 'review-mode)
+    (defface review-mode-ref-face
+      '((t (:bold t :foreground "yellow3")))
+      "参照のフェイス"
+      :group 'review-mode)
     (defface review-mode-fullwidth-hyphen-minus-face
       '((t (:foreground "grey90" :bkacground "red")))
       "全角ハイフン/マイナスのフェイス"
@@ -258,6 +286,7 @@
     (defvar review-mode-hide-face 'review-mode-hide-face)
     (defvar review-mode-nonhide-face 'review-mode-nonhide-face)
     (defvar review-mode-balloon-face 'review-mode-balloon-face)
+    (defvar review-mode-ref-face 'review-mode-ref-face)
     (defvar review-mode-fullwidth-hyphen-minus-face 'review-mode-fullwidth-hyphen-minus-face)
     (defvar review-mode-minus-sign-face 'review-mode-minus-sign-face)
     (defvar review-mode-hyphen-face 'review-mode-hyphen-face)
@@ -598,3 +627,6 @@
     )
   )
 )
+
+;; Associate .re files with review-mode
+(setq auto-mode-alist (append '(("\\.re$" . review-mode)) auto-mode-alist))
