@@ -319,6 +319,8 @@
     (define-key review-mode-map "\C-c\C-f\C-t" 'review-underline-region)
     (define-key review-mode-map "\C-c\C-f\C-u" 'review-underline-region)
     (define-key review-mode-map "\C-c\C-f\C-k" 'review-keyword-region)
+    (define-key review-mode-map "\C-c\C-f\C-h" 'review-hyperlink-region)
+    (define-key review-mode-map "\C-c\C-f\C-c" 'review-code-region)
     (define-key review-mode-map "\C-c!" 'review-kokomade)
     (define-key review-mode-map "\C-c\C-a" 'review-normal-comment)
     (define-key review-mode-map "\C-c\C-b" 'review-balloon-comment)
@@ -413,6 +415,18 @@
   "タイプフォントフォントタグ"
   (interactive "r")
   (review-string-region "@<tt>{" "}" start end)
+  )
+
+(defun review-hyperlink-region (start end)
+  "ハイパーリンクタグ"
+  (interactive "r")
+  (review-string-region "@<href>{" "}" start end)
+  )
+
+(defun review-code-region (start end)
+  "コードタグ"
+  (interactive "r")
+  (review-string-region "@<code>{" "}" start end)
   )
 
 ;; 吹き出し
