@@ -1,5 +1,5 @@
 ;; ReVIEW編集支援モード
-;; Copyright 2007-2010 Kenshi Muto <kmuto@debian.org>
+;; Copyright 2007-2013 Kenshi Muto <kmuto@debian.org>
 ;; License:
 ;;   GNU General Public License version 2 (see COPYING)
 
@@ -20,7 +20,7 @@
 (provide 'review-mode)
 (run-hooks 'review-load-hook)
 
-(defconst review-version "1.3"
+(defconst review-version "1.4"
   "編集モードバージョン")
 
 ;; 基本設定
@@ -312,6 +312,7 @@
     (define-key review-mode-map "\C-c\C-ft" 'review-underline-region)
     (define-key review-mode-map "\C-c\C-fu" 'review-underline-region)
     (define-key review-mode-map "\C-c\C-fk" 'review-keyword-region)
+    (define-key review-mode-map "\C-c\C-fn" 'review-index-region)
     (define-key review-mode-map "\C-c\C-f\C-b" 'review-bold-region)
     (define-key review-mode-map "\C-c\C-f\C-i" 'review-italic-region)
     (define-key review-mode-map "\C-c\C-f\C-e" 'review-italic-region)
@@ -321,6 +322,7 @@
     (define-key review-mode-map "\C-c\C-f\C-k" 'review-keyword-region)
     (define-key review-mode-map "\C-c\C-f\C-h" 'review-hyperlink-region)
     (define-key review-mode-map "\C-c\C-f\C-c" 'review-code-region)
+    (define-key review-mode-map "\C-c\C-f\C-n" 'review-index-region)
     (define-key review-mode-map "\C-c!" 'review-kokomade)
     (define-key review-mode-map "\C-c\C-a" 'review-normal-comment)
     (define-key review-mode-map "\C-c\C-b" 'review-balloon-comment)
@@ -427,6 +429,12 @@
   "コードタグ"
   (interactive "r")
   (review-string-region "@<code>{" "}" start end)
+  )
+
+(defun review-index-region (start end)
+  "表示型索引タグ"
+  (interactive "r")
+  (review-string-region "@<idx>{" "}" start end)
   )
 
 ;; 吹き出し
