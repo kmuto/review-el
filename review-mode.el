@@ -1,5 +1,13 @@
-;; ReVIEW編集支援モード
+;;; review-mode.el --- major mode for ReVIEW
+
 ;; Copyright 2007-2013 Kenshi Muto <kmuto@debian.org>
+
+;; Author: Kenshi Muto <kmuto@debian.org>
+;; URL: https://github.com/kmuto/review-el
+
+;;; Commentary:
+
+;; ReVIEW編集支援モード
 ;; License:
 ;;   GNU General Public License version 2 (see COPYING)
 
@@ -16,6 +24,8 @@
 ;; C-c [   【
 ;; C-c ]    】
 ;; C-c -    −
+
+;;; Code:
 
 (provide 'review-mode)
 (run-hooks 'review-load-hook)
@@ -653,3 +663,5 @@
 
 ;; Associate .re files with review-mode
 (setq auto-mode-alist (append '(("\\.re$" . review-mode)) auto-mode-alist))
+
+;;; review-mode.el ends here
