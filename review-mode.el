@@ -662,6 +662,7 @@
 )
 
 ;; Associate .re files with review-mode
+;;;###autoload
 (setq auto-mode-alist (append '(("\\.re$" . review-mode)) auto-mode-alist))
 
 ;;; review-mode.el ends here
