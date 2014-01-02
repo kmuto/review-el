@@ -27,7 +27,6 @@
 
 ;;; Code:
 
-(provide 'review-mode)
 (run-hooks 'review-load-hook)
 
 (defconst review-version "1.4"
@@ -663,5 +662,7 @@
 
 ;; Associate .re files with review-mode
 (setq auto-mode-alist (append '(("\\.re$" . review-mode)) auto-mode-alist))
+
+(provide 'review-mode)
 
 ;;; review-mode.el ends here
