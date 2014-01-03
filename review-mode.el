@@ -1,6 +1,6 @@
 ;;; review-mode.el --- major mode for ReVIEW
 
-;; Copyright 2007-2013 Kenshi Muto <kmuto@debian.org>
+;; Copyright 2007-2014 Kenshi Muto <kmuto@debian.org>
 
 ;; Author: Kenshi Muto <kmuto@debian.org>
 ;; URL: https://github.com/kmuto/review-el
@@ -10,26 +10,60 @@
 ;; ReVIEW編集支援モード
 ;; License:
 ;;   GNU General Public License version 2 (see COPYING)
-
-;; C-c C-a ユーザーから編集へのメッセージ
-;; C-c C-k ユーザー注
-;; C-c C-d DTPへのメッセージ
-;; C-c C-r 参照先をあとで確認
-;; C-c C-h =タイトル挿入
+;;
+;; C-c C-a ユーザーから編集者へのメッセージ擬似マーカー
+;; C-c C-k ユーザー注釈の擬似マーカー
+;; C-c C-d DTP担当へのメッセージ擬似マーカー
+;; C-c C-r 参照先をあとで確認する擬似マーカー
+;; C-c !   作業途中の擬似マーカー
+;; C-c C-t 1 作業者名の変更
+;; C-c C-t 2 DTP担当の変更
+;;
+;; C-c C-e 選択範囲をブロックタグで囲む
+;; C-c C-f b 太字タグ(@<b>)で囲む
+;; C-c C-f C-b 同上
+;; C-c C-f k キーワードタグ(@<kw>)で囲む
+;; C-c C-f C-k キーワードタグ(@<kw>)で囲む
+;; C-c C-f i イタリックタグ(@<i>)で囲む
+;; C-c C-f C-i 同上
+;; C-c C-f e 同上
+;; C-c C-f C-e 同上
+;; C-c C-f t 等幅タグ(@<tt>)で囲む
+;; C-c C-f C-t 同上
+;; C-c C-f u 同上
+;; C-c C-f C-u 同上
+;; C-c C-f a 等幅イタリックタグ(@<tti>)で囲む
+;; C-c C-f C-a 同上
+;; C-c C-f C-h ハイパーリンクタグ(@<href>)で囲む
+;; C-c C-f C-c コードタグ(@<code>)で囲む
+;; C-c C-f C-n 出力付き索引化(@<idx>)する
+;;
+;; C-c C-p =見出し挿入(レベルを指定)
+;; C-c C-b 吹き出しを入れる
+;; C-c CR  隠し索引(@<hidx>)を入れる
+;; C-c <   rawのHTML開きタグを入れる
+;; C-c >   rawのHTML閉じタグを入れる
+;;
 ;; C-c 1   近所のURIを検索してブラウザを開く
 ;; C-c 2   範囲をURIとしてブラウザを開く
-;; C-c !   作業途中を示す
 ;; C-c (   全角(
+;; C-c 8   同上
 ;; C-c )   全角)
+;; C-c 9   同上
 ;; C-c [   【
 ;; C-c ]    】
-;; C-c -    −
+;; C-c -    全角ダーシ
+;; C-c *    全角＊
+;; C-c /    全角／
+;; C-c \    ￥
+;; C-c SP   全角スペース
+;; C-c :    全角：
 
 ;;; Code:
 
 (run-hooks 'review-load-hook)
 
-(defconst review-version "1.4"
+(defconst review-version "1.5"
   "編集モードバージョン")
 
 ;; 基本設定
@@ -499,19 +533,19 @@
 ;; ヘッダ
 (defun review-header (pattern &optional force)
   (interactive "sヘッダレベル: \nP")
-  "注釈コメントを挿入"
+  "見出しを挿入"
   (insert (make-string (string-to-number pattern) ?=) " "))
 
 ;; rawでタグのオープン/クローズ
 (defun review-opentag (pattern &optional force)
   (interactive "sタグ: \nP")
   "raw開始タグ"
-  (insert "//raw[<" pattern ">]")
+  (insert "//raw[|html|<" pattern ">]")
 )
 (defun review-closetag (pattern &optional force)
   (interactive "sタグ: \nP")
   "raw終了タグ"
-  (insert "//raw[</" pattern ">]")
+  (insert "//raw[|html|</" pattern ">]")
 )
 
 ;; ブラウズ
@@ -623,7 +657,7 @@
   )
 
 (defun review-index-change (start end)
-  "選択領域を索引として()とスペースを取る"
+  "選択領域を索引として追記する。索引からは()とスペースを取る"
   (interactive "r")
   (let (_review-index-buffer)
     
@@ -640,7 +674,7 @@
   )
 
 (defun page-increment-region (pattern &optional force start end)
-  "選択領域のページ数を増減"
+  "選択領域のページ数を増減(DTP作業用)"
   (interactive "n増減値: \nP\nr")
   (save-restriction
     (narrow-to-region start end)
@@ -648,6 +682,15 @@
       (goto-char pos)
       (while (setq pos (re-search-forward "^\\([0-9][0-9]*\\)\t" nil t))
         (replace-match (concat (number-to-string (+ pattern (string-to-number (match-string 1)))) "\t"))
+      )
+    )
+  )
+  (save-restriction
+    (narrow-to-region start end)
+    (let ((pos (point-min)))
+      (goto-char pos)
+      (while (setq pos (re-search-forward "^p\\.\\([0-9][0-9]*\\) " nil t))
+        (replace-match (concat "p." (number-to-string (+ pattern (string-to-number (match-string 1)))) " "))
       )
     )
   )
