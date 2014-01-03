@@ -69,6 +69,7 @@
 (defvar review-index-start "@<hidx>{" "索引タグの開始文字")
 (defvar review-index-end "}" "索引タグの終了文字")
 (defvar review-use-skk-mode nil "t:SKKモードで開始")
+(defvar rreview-dtp-name nil "現在のDTP")
 
 (defvar review-key-mapping
   '(
