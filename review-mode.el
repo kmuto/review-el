@@ -576,14 +576,6 @@
   (setq mode-name review-mode-name)
   )
 
-(defun review-change-mode-sub (number)
-  "編集モード変更サブルーチン"
-  (let (list)
-    (setq list (nth number review-name-list))
-    (setq review-mode-name (car list))
-    )
-  )
-
 ;; DTP の変更
 (defun review-change-dtp ()
   (interactive)
