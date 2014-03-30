@@ -128,7 +128,12 @@
 ;; 編集モードベース関数
 ;;;###autoload
 (defun review-mode ()
-  "メジャー編集モード"
+  "Major mode for editing ReVIEW text.
+
+To see what version of ReVIEW mode your are running, enter `\\[review-version]'.
+
+Key bindings:
+\\{review-mode-map}"
   (interactive)
   (kill-all-local-variables)
 
@@ -407,8 +412,8 @@
 
 ;; リージョン取り込み
 (defun review-block-region (pattern &optional force start end)
-  "選択領域を囲むタグを設定"
-  (interactive "sコメント: \nP\nr")
+  "選択領域を指定したタグで囲みます。"
+  (interactive "sタグ: \nP\nr")
 
   (save-restriction
     (narrow-to-region start end)
@@ -433,133 +438,144 @@
   )
 
 (defun review-bold-region (start end)
-  "ボールドフォントタグ"
+  "選択領域を太字タグ(@<b>)で囲みます"
   (interactive "r")
   (review-string-region "@<b>{" "}" start end)
   )
 
 
 (defun review-keyword-region (start end)
-  "キーワードフォントタグ"
+  "選択領域をキーワードフォントタグ(@<kw>)で囲みます"
   (interactive "r")
   (review-string-region "@<kw>{" "}" start end)
   )
 
 (defun review-italic-region (start end)
-  "イタリックフォントタグ"
+  "選択領域をイタリックフォントタグ(@<i>)で囲みます"
   (interactive "r")
   (review-string-region "@<i>{" "}" start end)
   )
 
 (defun review-underline-italic-region (start end)
-  "TTイタリックフォントタグ"
+  "選択領域を等幅イタリックフォントタグ(@<tti>)で囲みます"
   (interactive "r")
   (review-string-region "@<tti>{" "}" start end)
   )
 
 (defun review-underline-region (start end)
-  "タイプフォントフォントタグ"
+  "選択領域を等幅タグ(@<tt>)で囲みます"
   (interactive "r")
   (review-string-region "@<tt>{" "}" start end)
   )
 
 (defun review-hyperlink-region (start end)
-  "ハイパーリンクタグ"
+  "選択領域をハイパーリンクタグ(@<href>)で囲みます"
   (interactive "r")
   (review-string-region "@<href>{" "}" start end)
   )
 
 (defun review-code-region (start end)
-  "コードタグ"
+  "選択領域をコードタグ(@<code>)で囲みます"
   (interactive "r")
   (review-string-region "@<code>{" "}" start end)
   )
 
 (defun review-index-region (start end)
-  "表示型索引タグ"
+  "選択領域を出力付き索引化(@<idx>)で囲みます"
   (interactive "r")
   (review-string-region "@<idx>{" "}" start end)
   )
 
 ;; 吹き出し
 (defun review-balloon-comment (pattern &optional force)
+  "吹き出しを挿入。"
   (interactive "s吹き出し: \nP")
-  "吹き出しを挿入"
   (insert "@<balloon>{" pattern "}")
   )
 
 ;; 編集一時終了
 (defun review-kokomade ()
+  "一時終了タグを挿入。
+
+作業途中の疑似マーカーを挿入します。"
   (interactive)
-  "一時終了タグを挿入"
   (insert review-comment-start "ここまで -" review-mode-name review-comment-end  "\n")
   )
 
 ;; 編集コメント
 (defun review-normal-comment (pattern &optional force)
+  "コメントを挿入。
+
+ユーザーから編集者へのメッセージ疑似マーカーを挿入します。"
   (interactive "sコメント: \nP")
-  "コメントを挿入"
   (insert review-comment-start pattern " -" review-mode-name review-comment-end)
   )
 
 ;; DTP向けコメント
 (defun review-dtp-comment (pattern &optional force)
+  "DTP向けコメントを挿入。
+
+DTP担当へのメッセージ疑似マーカーを挿入します。"
   (interactive "sDTP向けコメント: \nP")
-  "DTP向けコメントを挿入"
   (insert review-comment-start review-mode-dtp ":" pattern " -" review-mode-name review-comment-end)
   )
 
 ;; 注釈
 (defun review-tip-comment (pattern &optional force)
+  "注釈コメントを挿入。
+
+ユーザー注釈の疑似マーカーを挿入します。
+"
   (interactive "s注釈コメント: \nP")
-  "注釈コメントを挿入"
   (insert review-comment-start review-mode-tip-name ":" pattern " -" review-mode-name review-comment-end)
   )
 
 ;; 参照
 (defun review-reference-comment ()
+  "参照コメントを挿入。
+
+参照先をあとで確認する疑似マーカーを挿入します。"
   (interactive)
-  "参照コメントを挿入"
-  (insert "◆→参照先確認 -" review-mode-name "←◆")
+  (insert review-comment-start "参照先確認 -" review-mode-name review-comment-end)
   )
 
 ;; 索引
 (defun review-index-comment (pattern &optional force)
-  (interactive "s索引: \nP")
   "索引ワードを挿入"
+  (interactive "s索引: \nP")
   (insert review-index-start pattern review-index-end)
   )
 
 ;; ヘッダ
 (defun review-header (pattern &optional force)
-  (interactive "sヘッダレベル: \nP")
   "見出しを挿入"
+  (interactive "sヘッダレベル: \nP")
   (insert (make-string (string-to-number pattern) ?=) " "))
 
 ;; rawでタグのオープン/クローズ
 (defun review-opentag (pattern &optional force)
-  (interactive "sタグ: \nP")
   "raw開始タグ"
+  (interactive "sタグ: \nP")
   (insert "//raw[|html|<" pattern ">]")
 )
 (defun review-closetag (pattern &optional force)
-  (interactive "sタグ: \nP")
   "raw終了タグ"
+  (interactive "sタグ: \nP")
   (insert "//raw[|html|</" pattern ">]")
 )
 
 ;; ブラウズ
 (defun review-search-uri ()
-  (interactive)
   "手近なURIを検索してブラウザで表示"
+  (interactive)
   (re-search-forward review-uri-regexp)
   (goto-char (match-beginning 1))
   (browser-url (match-string 1))
   )
 
 (defun review-search-uri2 (start end)
-  (interactive "r")
   "選択領域をブラウザで表示"
+  (interactive "r")
   (message (buffer-substring-no-properties start end))
   (browse-url (buffer-substring-no-properties start end))
   )
@@ -584,8 +600,10 @@
 
 ;; 基本モードの変更
 (defun review-change-mode ()
+  "編集モードの変更。
+
+作業者名を変更します。"
   (interactive)
-  "編集モードの変更"
   (let (key _message _element (_list review-name-list) (sum 0))
     (while _list
       (setq _element (car (car _list)))
@@ -613,8 +631,10 @@
 
 ;; DTP の変更
 (defun review-change-dtp ()
+  "DTP担当の変更。
+
+DTP担当を変更します。"
   (interactive)
-  "DTP担当の変更"
   (let (key _message _element (_list review-dtp-list) (sum 0))
     (while _list
       (setq _element (car _list))
