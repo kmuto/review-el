@@ -1,5 +1,4 @@
 ;;; review-mode.el --- major mode for ReVIEW -*- lexical-binding: t -*-
-
 ;; Copyright 2007-2014 Kenshi Muto <kmuto@debian.org>
 
 ;; Author: Kenshi Muto <kmuto@debian.org>
@@ -427,7 +426,10 @@
   "\\(\\b\\(s?https?\\|ftp\\|file\\|gopher\\|news\\|telnet\\|wais\\|mailto\\):\\(//[-a-zA-Z0-9_.]+:[0-9]*\\)?[-a-zA-Z0-9_=?#$@~`%&*+|\\/.,]*[-a-zA-Z0-9_=#$@~`%&*+|\\/]+\\)\\|\\(\\([^-A-Za-z0-9!_.%]\\|^\\)[-A-Za-z0-9._!%]+@[A-Za-z0-9][-A-Za-z0-9._!]+[A-Za-z0-9]\\)"
   "URI選択部分正規表現")
 
-
+;; for < Emacs24
+(unless (fboundp 'setq-local)
+  (defmacro setq-local (var val)
+    `(set (make-local-variable ',var) ,val)))
 
 ;;;; Main routines
 ;;;###autoload
@@ -438,6 +440,7 @@ To see what version of ReVIEW mode your are running, enter `\\[review-version]'.
 
 Key bindings:
 \\{review-mode-map}"
+
   (auto-fill-mode 0)
   (if review-use-skk-mode (skk-mode))
   ;; (setq-local comment-start "#@#")
