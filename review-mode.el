@@ -64,7 +64,7 @@
 
 (declare-function skk-mode "skk-mode")
 
-(defconst review-version "1.5"
+(defconst review-version "1.6"
   "編集モードバージョン")
 
 ;;;; Custom Variables
