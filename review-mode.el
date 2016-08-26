@@ -1,5 +1,5 @@
 ;;; review-mode.el --- major mode for ReVIEW -*- lexical-binding: t -*-
-;; Copyright 2007-2014 Kenshi Muto <kmuto@debian.org>
+;; Copyright 2007-2016 Kenshi Muto <kmuto@debian.org>
 
 ;; Author: Kenshi Muto <kmuto@debian.org>
 ;; URL: https://github.com/kmuto/review-el
@@ -108,6 +108,7 @@
     (define-key map "\C-c\C-k" 'review-tip-comment)
     (define-key map "\C-c\C-r" 'review-reference-comment)
     (define-key map "\C-c\C-m" 'review-index-comment)
+    (define-key map "\C-c\C-w" 'review-insert-index)
     (define-key map "\C-c\C-p" 'review-header)
     (define-key map "\C-c<" 'review-opentag)
     (define-key map "\C-c>" 'review-closetag)
@@ -705,6 +706,20 @@ DTP担当を変更します。"
     (setq review-mode-name (car list))
     ;;(setq review-tip-name (cdr list))
     ))
+
+(defun review-insert-index (start end)
+  "選択領域を索引として領域の前に配置する"
+  (interactive "r")
+  (let (review-index-buffer)
+    (save-restriction
+      (narrow-to-region start end)
+      (setq review-index-buffer (buffer-substring-no-properties start end))
+      (goto-char (point-min))
+      (insert "@<hidx>{" review-index-buffer "}")))
+  ;; FIXME:本当は、挿入位置の前の文字が{だったら@<>タグの可能性が高いので、
+  ;; @<...>{ の@の前まで移動してから挿入したい
+  )
+
 
 (defun review-index-change (start end)
   "選択領域を索引として追記する。索引からは()とスペースを取る"
