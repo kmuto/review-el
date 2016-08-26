@@ -83,6 +83,7 @@
 (defvar review-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map "\C-c\C-e" 'review-block-region)
+    (define-key map "\C-c\C-f\C-f" 'review-inline-region)
     (define-key map "\C-c\C-fb" 'review-bold-region)
     (define-key map "\C-c\C-fa" 'review-underline-italic-region)
     (define-key map "\C-c\C-fi" 'review-italic-region)
@@ -460,6 +461,17 @@ Key bindings:
     (insert "//" pattern "{\n")
     (goto-char (point-max))
     (insert "//}\n")))
+
+(defun review-inline-region (pattern &optional _force start end)
+  "選択領域を指定したインラインタグで囲みます。"
+  (interactive "sタグ: \nP\nr")
+  (save-restriction
+    (narrow-to-region start end)
+    (goto-char (point-min))
+    (if (equal pattern "") (setq cmd "b") (setq cmd pattern)) ; default value
+    (insert "@<" cmd ">{")
+    (goto-char (point-max))
+    (insert "}")))
 
 ;; フォント付け
 (defun review-string-region (markb marke start end)
