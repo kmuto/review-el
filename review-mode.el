@@ -1,5 +1,5 @@
 ;;; review-mode.el --- major mode for ReVIEW -*- lexical-binding: t -*-
-;; Copyright 2007-2016 Kenshi Muto <kmuto@debian.org>
+;; Copyright 2007-2017 Kenshi Muto <kmuto@debian.org>
 
 ;; Author: Kenshi Muto <kmuto@debian.org>
 ;; URL: https://github.com/kmuto/review-el
@@ -766,6 +766,18 @@ DTP担当を変更します。"
          (concat "p."
                  (number-to-string
                   (+ pattern (string-to-number (match-string 1)))) " "))))))
+
+;; カーソル位置から後続の英字記号範囲を選択して等幅化
+(defun review-surround-tt ()
+  "カーソル位置から後続の英字記号範囲を選択して等幅化"
+  (interactive)
+  (re-search-forward "[-a-zA-Z0-9_=?#$@~`%&*+|\\/.,]+")
+  (goto-char (match-end 0))
+  (insert "}")
+  (goto-char (match-beginning 0))
+  (insert "@<tt>{")
+  (goto-char (+ 7 (match-end 0)))
+)
 
 ;; Associate .re files with review-mode
 ;;;###autoload
