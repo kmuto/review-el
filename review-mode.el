@@ -771,7 +771,7 @@ DTP担当を変更します。"
 (defun review-surround-tt ()
   "カーソル位置から後続の英字記号範囲を選択して等幅化"
   (interactive)
-  (re-search-forward "[-a-zA-Z0-9_=?#$@~`%&*+|()'\\/.,:]+")
+  (re-search-forward "[-a-zA-Z0-9_=?#$@~`%&*+|()'\\/.,:<>]+")
   (goto-char (match-end 0))
   (insert "}")
   (goto-char (match-beginning 0))
