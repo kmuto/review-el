@@ -9,7 +9,7 @@
 ;; "Re:VIEW" text editing mode
 ;;
 ;; License:
-;;   GNU General Public License version 2 (see COPYING)
+;;   GNU General Public License version 3 (see COPYING)
 ;;
 ;; C-c C-a ユーザーから編集者へのメッセージ擬似マーカー
 ;; C-c C-k ユーザー注釈の擬似マーカー
@@ -40,7 +40,8 @@
 ;;
 ;; C-c C-p =見出し挿入(レベルを指定)
 ;; C-c C-b 吹き出しを入れる
-;; C-c CR  隠し索引(@<hidx>)を入れる
+;; C-c CR  隠し索引(@<hidx>)を入力して入れる
+;; C-c C-w 選択範囲を隠し索引(@<hidx>)にして範囲の前に入れる
 ;; C-c <   rawのHTML開きタグを入れる
 ;; C-c >   rawのHTML閉じタグを入れる
 ;;
@@ -63,13 +64,13 @@
 
 (declare-function skk-mode "skk-mode")
 
-(defconst review-version "1.6"
+(defconst review-version "1.7"
   "編集モードバージョン")
 
 ;;;; Custom Variables
 
 (defgroup review-mode nil
-  "Major mode for editing text files in ReVIEW format."
+  "Major mode for editing text files in Re:VIEW format."
   :prefix "review-"
   :group 'wp)
 
