@@ -50,6 +50,8 @@
 ;; C-c C-f C-a 同上
 ;; C-c C-f C-h ハイパーリンクタグ(@<href>)で囲む
 ;; C-c C-f C-c コードタグ(@<code>)で囲む
+;; C-c C-f m 数式タグ(@<m>)で囲む
+;; C-c C-f C-m 同上
 ;; C-c C-f C-n 出力付き索引化(@<idx>)する
 ;;
 ;; C-c C-p =見出し挿入(レベルを指定)
@@ -106,6 +108,7 @@
     (define-key map "\C-c\C-ft" 'review-underline-region)
     (define-key map "\C-c\C-fu" 'review-underline-region)
     (define-key map "\C-c\C-fk" 'review-keyword-region)
+    (define-key map "\C-c\C-fm" 'review-math-region)
     (define-key map "\C-c\C-fn" 'review-index-region)
     (define-key map "\C-c\C-f\C-b" 'review-bold-region)
     (define-key map "\C-c\C-f\C-i" 'review-italic-region)
@@ -116,6 +119,7 @@
     (define-key map "\C-c\C-f\C-k" 'review-keyword-region)
     (define-key map "\C-c\C-f\C-h" 'review-hyperlink-region)
     (define-key map "\C-c\C-f\C-c" 'review-code-region)
+    (define-key map "\C-c\C-f\C-m" 'review-math-region)
     (define-key map "\C-c\C-f\C-n" 'review-index-region)
     (define-key map "\C-c!" 'review-kokomade)
     (define-key map "\C-c\C-a" 'review-normal-comment)
@@ -532,6 +536,11 @@ Key bindings:
   "選択領域をコードタグ(@<code>)で囲みます"
   (interactive "r")
   (review-string-region "@<code>{" "}" start end))
+
+(defun review-math-region (start end)
+  "選択領域を数式タグ(@<m>)で囲みます"
+  (interactive "r")
+  (review-string-region "@<m>{" "}" start end))
 
 (defun review-index-region (start end)
   "選択領域を出力付き索引化(@<idx>)で囲みます"
