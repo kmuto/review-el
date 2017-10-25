@@ -540,7 +540,14 @@ Key bindings:
 (defun review-math-region (start end)
   "選択領域を数式タグ(@<m>)で囲みます"
   (interactive "r")
-  (review-string-region "@<m>{" "}" start end))
+  (save-restriction
+    (narrow-to-region start end)
+    (goto-char (point-min))
+    (replace-string "}" "\\}")
+    (goto-char (point-min))
+    (insert "@<m>{")
+    (goto-char (point-max))
+    (insert "}")))
 
 (defun review-index-region (start end)
   "選択領域を出力付き索引化(@<idx>)で囲みます"
