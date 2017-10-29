@@ -358,6 +358,7 @@
     ("@<chap>{.*?}" . review-mode-ref-face)
     ("@<title>{.*?}" . review-mode-ref-face)
     ("@<chapref>{.*?}" . review-mode-ref-face)
+    ("@<bib>{.*?}" . review-mode-ref-face)
     ("@<u>{.*?}" . underline)
     ("@<tt>{.*?}" . font-lock-type-face)
     ("@<ttbold>{.*?}" . review-mode-underlinebold-face)
