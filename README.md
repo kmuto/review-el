@@ -29,8 +29,10 @@ reファイルを開いたときに命令に応じたカラーリングが自動
 - C-c C-f C-k キーワードタグ(@\<kw\>)で囲む
 - C-c C-f i イタリックタグ(@\<i\>)で囲む
 - C-c C-f C-i 同上
-- C-c C-f e 同上
-- C-c C-f C-e 同上
+- C-c C-f e 同上（review-use-em が t のときには強調タグ（@\<em\>）で囲む）
+- C-c C-f C-e 同上（review-use-em が t のときには強調タグ（@\<em\>）で囲む）
+- C-c C-f s 強調タグ(@\<strong\>)で囲む
+- C-c C-f C-s 同上
 - C-c C-f t 等幅タグ(@\<tt\>)で囲む
 - C-c C-f C-t 同上
 - C-c C-f u 同上
@@ -67,6 +69,7 @@ reファイルを開いたときに命令に応じたカラーリングが自動
 (setq review-mode-name "著者") ; コメントなどに入れる名前を「著者」とする
 (setq review-mode-tip-name "注") ; 注を入れる際の名称を「注」とする
 (setq review-use-skk-mode t) ; SKKを有効にした状態で開く
+(setq review-use-em t) ; C-c C-f C-e で入るタグをiではなくemにする
 ```
 
 ## ライセンス
