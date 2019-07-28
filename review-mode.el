@@ -1,5 +1,5 @@
 ;;; review-mode.el --- major mode for ReVIEW -*- lexical-binding: t -*-
-;; Copyright 2007-2018 Kenshi Muto <kmuto@debian.org>
+;; Copyright 2007-2019 Kenshi Muto <kmuto@debian.org>
 
 ;; Author: Kenshi Muto <kmuto@debian.org>
 ;; URL: https://github.com/kmuto/review-el
@@ -60,6 +60,7 @@
 ;; C-c C-b 吹き出しを入れる
 ;; C-c CR  隠し索引(@<hidx>)を入力して入れる
 ;; C-c C-w 選択範囲を隠し索引(@<hidx>)にして範囲の前に入れる
+;; C-c ,   @<br>{}を挿入
 ;; C-c <   rawのHTML開きタグを入れる
 ;; C-c >   rawのHTML閉じタグを入れる
 ;;
@@ -82,7 +83,7 @@
 
 (declare-function skk-mode "skk-mode")
 
-(defconst review-version "1.9"
+(defconst review-version "1.10"
   "編集モードバージョン")
 
 ;;;; Custom Variables
@@ -134,6 +135,7 @@
     (define-key map "\C-c\C-m" 'review-index-comment)
     (define-key map "\C-c\C-w" 'review-insert-index)
     (define-key map "\C-c\C-p" 'review-header)
+    (define-key map "\C-c," 'review-br)
     (define-key map "\C-c<" 'review-opentag)
     (define-key map "\C-c>" 'review-closetag)
 
@@ -395,7 +397,7 @@
     ("^//}" . review-mode-hide-face)
     ("<\<>" . review-mode-bracket-face)
     ("－" . review-mode-fullwidth-hyphen-minus-face)
-    ("－" . review-mode-minus-sign-face)
+    ("−" . review-mode-minus-sign-face)
     ("‐" . review-mode-hyphen-face)
     ("‒" . review-mode-figure-dash-face)
     ("–" . review-mode-en-dash-face)
@@ -638,6 +640,11 @@ DTP担当へのメッセージ疑似マーカーを挿入します。"
   "見出しを挿入"
   (interactive "sヘッダレベル: \nP")
   (insert (make-string (string-to-number pattern) ?=) " "))
+
+(defun review-br ()
+  "強制改行タグ(@<br>{})を挿入します。"
+  (interactive)
+  (insert "@<br>{}"))
 
 ;; rawでタグのオープン/クローズ
 (defun review-opentag (pattern &optional _force)
