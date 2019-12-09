@@ -83,7 +83,7 @@
 
 (declare-function skk-mode "skk-mode")
 
-(defconst review-version "1.10"
+(defconst review-version "1.11"
   "編集モードバージョン")
 
 ;;;; Custom Variables
@@ -287,7 +287,7 @@
   :group 'review-faces)
 
 (defface review-mode-ref-face
-  '((t (:bold t :foreground "yellow3")))
+  '((t (:bold t :foreground "yellow4")))
   "参照のフェイス"
   :group 'review-faces)
 
@@ -566,11 +566,16 @@ Key bindings:
   (save-restriction
     (narrow-to-region start end)
     (goto-char (point-min))
-    (replace-string "}" "\\}")
-    (goto-char (point-min))
-    (insert "@<m>{")
-    (goto-char (point-max))
-    (insert "}")))
+    (if (string-match "}" (buffer-substring start end))
+      (progn
+        (insert "@<m>$")
+        (goto-char (point-max))
+        (insert "$"))
+      (progn
+       (insert "@<m>{")
+       (goto-char (point-max))
+       (insert "}")))
+  ))
 
 (defun review-index-region (start end)
   "選択領域を出力付き索引化(@<idx>)で囲みます"
