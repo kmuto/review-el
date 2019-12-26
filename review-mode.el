@@ -1,7 +1,7 @@
 ;;; review-mode.el --- major mode for ReVIEW -*- lexical-binding: t -*-
-;; Copyright 2007-2019 Kenshi Muto <kmuto@debian.org>
+;; Copyright 2007-2019 Kenshi Muto <kmuto@kmuto.jp>
 
-;; Author: Kenshi Muto <kmuto@debian.org>
+;; Author: Kenshi Muto <kmuto@kmuto.jp>
 ;; URL: https://github.com/kmuto/review-el
 
 ;;; Commentary:
@@ -33,7 +33,8 @@
 ;; C-c C-t 1 作業者名の変更
 ;; C-c C-t 2 DTP担当の変更
 ;;
-;; C-c C-e 選択範囲をブロックタグで囲む
+;; C-c C-e 選択範囲をブロックタグで囲む。選択されていない場合は新規に挿入する。新規タブで補完可
+;; C-c C-f C-f 選択範囲をインラインタグで囲む。選択されていない場合は新規に挿入する。タブで補完可
 ;; C-c C-f b 太字タグ(@<b>)で囲む
 ;; C-c C-f C-b 同上
 ;; C-c C-f k キーワードタグ(@<kw>)で囲む
@@ -73,8 +74,10 @@
 ;; C-c [   【
 ;; C-c ]    】
 ;; C-c -    全角ダーシ
+;; C-c +    全角＋
 ;; C-c *    全角＊
 ;; C-c /    全角／
+;; C-c =    全角＝
 ;; C-c \    ￥
 ;; C-c SP   全角スペース
 ;; C-c :    全角：
@@ -83,7 +86,7 @@
 
 (declare-function skk-mode "skk-mode")
 
-(defconst review-version "1.11"
+(defconst review-version "1.12"
   "編集モードバージョン")
 
 ;;;; Custom Variables
@@ -149,9 +152,11 @@
     (define-key map "\C-c\[" 'review-zenkaku-mapping-langle)
     (define-key map "\C-c\]" 'review-zenkaku-mapping-rangle)
     (define-key map "\C-c-" 'review-zenkaku-mapping-minus)
+    (define-key map "\C-c+" 'review-zenkaku-mapping-plus)
     (define-key map "\C-c*" 'review-zenkaku-mapping-asterisk)
     (define-key map "\C-c/" 'review-zenkaku-mapping-slash)
     (define-key map "\C-c\\" 'review-zenkaku-mapping-yen)
+    (define-key map "\C-c=" 'review-zenkaku-mapping-equal)
     (define-key map "\C-c " 'review-zenkaku-mapping-space)
     (define-key map "\C-c:" 'review-zenkaku-mapping-colon)
 
@@ -444,14 +449,25 @@
     ("8" . "（")
     ("9" . "）")
     ("-" . "－")
+    ("+" . "＋")
     ("*" . "＊")
     ("/" . "／")
+    ("=" . "＝")
     ("\\" . "￥")
     (" " . "　")
     (":" . "：")
     ("<" . "<\\<>")
     )
   "全角置換キー")
+
+;; 補完キーワード
+(defvar review-block-op
+  '("bibpaper[][]" "blankline" "caution" "cmd" "embed[]" "emlist" "emlistnum" "emtable[]" "footnote[][]" "graph[][][]" "image[][]" "imgtable[][]" "important" "indepimage[]" "info" "lead" "list[][]" "listnum[][]" "memo" "noindent" "note" "notice" "numberlessimage[]" "quote" "raw" "read" "source" "table[][]" "texequation" "tip" "tsize[]" "warning")
+  "補完対象のブロック命令")
+
+(defvar review-inline-op
+  '("ami" "b" "balloon" "bib" "bou" "br" "chap" "chapref" "chapter" "code" "column" "comment" "em" "embed" "eq" "fn" "hd" "hidx" "href" "i" "icon" "idx" "img" "kw" "list" "m" "raw" "ruby" "strong" "table" "tcy" "title" "tt" "ttb" "tti" "u" "uchar" "w" "wb")
+  "補完対象のインライン命令")
 
 (defvar review-uri-regexp
   "\\(\\b\\(s?https?\\|ftp\\|file\\|gopher\\|news\\|telnet\\|wais\\|mailto\\):\\(//[-a-zA-Z0-9_.]+:[0-9]*\\)?[-a-zA-Z0-9_=?#$@~`%&*+|\\/.,]*[-a-zA-Z0-9_=#$@~`%&*+|\\/]+\\)\\|\\(\\([^-A-Za-z0-9!_.%]\\|^\\)[-A-Za-z0-9._!%]+@[A-Za-z0-9][-A-Za-z0-9._!]+[A-Za-z0-9]\\)"
@@ -481,106 +497,158 @@ Key bindings:
   (run-hooks 'review-mode-hook))
 
 ;; リージョン取り込み
-(defun review-block-region (pattern &optional _force start end)
+(defvar review-default-blockop "emlist")
+(defun review-block-region (start end pattern)
   "選択領域を指定したタグで囲みます。"
-  (interactive "sタグ: \nP\nr")
-  (save-restriction
-    (narrow-to-region start end)
-    (goto-char (point-min))
+  (interactive
+   (let ((string (completing-read (concat "タグ [" review-default-blockop "]: ") review-block-op nil nil)))
+     (list (region-beginning) (region-end) string)))
+  (if (string= "" pattern)
+      (setq pattern review-default-blockop)
+    (setq review-default-blockop pattern))
+  (if (region-active-p)
+      (save-restriction
+	(narrow-to-region start end)
+	(goto-char (point-min))
+	(insert "//" pattern "{\n")
+	(goto-char (point-max))
+	(insert "//}\n"))
+  (progn
+    (setq review-position (point))
     (insert "//" pattern "{\n")
-    (goto-char (point-max))
-    (insert "//}\n")))
-
-(defun review-inline-region (pattern &optional _force start end)
-  "選択領域を指定したインラインタグで囲みます。"
-  (interactive "sタグ: \nP\nr")
-  (save-restriction
-    (narrow-to-region start end)
-    (goto-char (point-min))
-    (if (equal pattern "") (setq cmd "b") (setq cmd pattern)) ; default value
-    (insert "@<" cmd ">{")
-    (goto-char (point-max))
-    (insert "}")))
-
-;; フォント付け
-(defun review-string-region (markb marke start end)
-  "選択領域にフォントを設定"
-  (save-restriction
-    (narrow-to-region start end)
-    (goto-char (point-min))
-    (insert markb)
-    (goto-char (point-max))
-    (insert marke)))
-
-(defun review-bold-region (start end)
-  "選択領域を太字タグ(@<b>)で囲みます"
-  (interactive "r")
-  (review-string-region "@<b>{" "}" start end))
-
-(defun review-keyword-region (start end)
-  "選択領域をキーワードフォントタグ(@<kw>)で囲みます"
-  (interactive "r")
-  (review-string-region "@<kw>{" "}" start end))
-
-(defun review-italic-region (start end)
-  "選択領域をイタリックフォントタグ(@<i>)で囲みます"
-  (interactive "r")
-  (review-string-region "@<i>{" "}" start end))
-
-(defun review-em-region (start end)
-  "選択領域をイタリックフォントタグ(@<i>)または強調タグ(@<em>)で囲みます"
-  (interactive "r")
-  (if review-use-em
-      (review-string-region "@<em>{" "}" start end)
-    (review-string-region "@<i>{" "}" start end)
-    ))
-
-(defun review-strong-region (start end)
-  "選択領域を強調タグ(@<strong>)で囲みます"
-  (interactive "r")
-  (review-string-region "@<strong>{" "}" start end))
-
-(defun review-underline-italic-region (start end)
-  "選択領域を等幅イタリックフォントタグ(@<tti>)で囲みます"
-  (interactive "r")
-  (review-string-region "@<tti>{" "}" start end))
-
-(defun review-underline-region (start end)
-  "選択領域を等幅タグ(@<tt>)で囲みます"
-  (interactive "r")
-  (review-string-region "@<tt>{" "}" start end))
-
-(defun review-hyperlink-region (start end)
-  "選択領域をハイパーリンクタグ(@<href>)で囲みます"
-  (interactive "r")
-  (review-string-region "@<href>{" "}" start end))
-
-(defun review-code-region (start end)
-  "選択領域をコードタグ(@<code>)で囲みます"
-  (interactive "r")
-  (review-string-region "@<code>{" "}" start end))
-
-(defun review-math-region (start end)
-  "選択領域を数式タグ(@<m>)で囲みます"
-  (interactive "r")
-  (save-restriction
-    (narrow-to-region start end)
-    (goto-char (point-min))
-    (if (string-match "}" (buffer-substring start end))
-      (progn
-        (insert "@<m>$")
-        (goto-char (point-max))
-        (insert "$"))
-      (progn
-       (insert "@<m>{")
-       (goto-char (point-max))
-       (insert "}")))
+    (insert "//}\n")
+    (goto-char review-position)
+    (forward-word)
+    )
   ))
 
-(defun review-index-region (start end)
+(defvar review-default-inlineop "b")
+(defun review-inline-region (start end pattern)
+  "選択領域を指定したインラインタグで囲みます。"
+  (interactive
+   (let ((string (completing-read (concat "タグ [" review-default-inlineop "]: ") review-inline-op nil nil)))
+     (list (region-beginning) (region-end) string)))
+  (if (string= "" pattern)
+      (setq pattern review-default-inlineop)
+    (setq review-default-inlineop pattern))
+  
+  (if (region-active-p)
+      (save-restriction
+	(narrow-to-region start end)
+	(goto-char (point-min))
+	(insert "@<" pattern ">{")
+	(goto-char (point-max))
+	(insert "}"))
+     (progn
+       (insert "@<" pattern ">{}")
+       (backward-char)
+       )
+     ))
+
+;; フォント付け
+(defun review-string-region (markb marke)
+  "選択領域にフォントを設定"
+  (if (region-active-p)
+      (save-restriction
+	(narrow-to-region (region-beginning) (region-end))
+	(goto-char (point-min))
+	(insert markb)
+	(goto-char (point-max))
+	(insert marke))
+    (progn
+	(insert markb marke)
+	(backward-char)
+      )
+    ))
+(defun review-string-region2 (markb marke start end)
+  "選択領域にフォントを設定"
+  (if (region-active-p)
+      (save-restriction
+	(narrow-to-region start end)
+	(goto-char (point-min))
+	(insert markb)
+	(goto-char (point-max))
+	(insert marke))
+    (progn
+	(insert markb marke)
+	(backward-char)
+      )
+    ))
+
+(defun review-bold-region ()
+  "選択領域を太字タグ(@<b>)で囲みます"
+  (interactive)
+  (review-string-region "@<b>{" "}"))
+
+(defun review-keyword-region ()
+  "選択領域をキーワードフォントタグ(@<kw>)で囲みます"
+  (interactive)
+  (review-string-region "@<kw>{" "}"))
+
+(defun review-italic-region ()
+  "選択領域をイタリックフォントタグ(@<i>)で囲みます"
+  (interactive)
+  (review-string-region "@<i>{" "}"))
+
+(defun review-em-region ()
+  "選択領域をイタリックフォントタグ(@<i>)または強調タグ(@<em>)で囲みます"
+  (interactive)
+  (if review-use-em
+      (review-string-region "@<em>{" "}")
+    (review-string-region "@<i>{" "}")
+    ))
+
+(defun review-strong-region ()
+  "選択領域を強調タグ(@<strong>)で囲みます"
+  (interactive)
+  (review-string-region "@<strong>{" "}"))
+
+(defun review-underline-italic-region ()
+  "選択領域を等幅イタリックフォントタグ(@<tti>)で囲みます"
+  (interactive)
+  (review-string-region "@<tti>{" "}"))
+
+(defun review-underline-region ()
+  "選択領域を等幅タグ(@<tt>)で囲みます"
+  (interactive)
+  (review-string-region "@<tt>{" "}"))
+
+(defun review-hyperlink-region ()
+  "選択領域をハイパーリンクタグ(@<href>)で囲みます"
+  (interactive)
+  (review-string-region "@<href>{" "}"))
+
+(defun review-code-region ()
+  "選択領域をコードタグ(@<code>)で囲みます"
+  (interactive)
+  (review-string-region "@<code>{" "}"))
+
+(defun review-math-region ()
+  "選択領域を数式タグ(@<m>)で囲みます"
+  (interactive)
+  (if (region-active-p)
+      (save-restriction
+	(narrow-to-region (region-beginning) (region-end))
+	(goto-char (point-min))
+	(if (string-match "}" (buffer-substring (region-beginning) (region-end)))
+	    (progn
+              (insert "@<m>$")
+              (goto-char (point-max))
+              (insert "$"))
+	  (progn
+	    (insert "@<m>{")
+	    (goto-char (point-max))
+	    (insert "}"))))
+    (progn
+      (insert "@<m>$$")
+      (backward-char)
+      )
+    ))
+
+(defun review-index-region ()
   "選択領域を出力付き索引化(@<idx>)で囲みます"
-  (interactive "r")
-  (review-string-region "@<idx>{" "}" start end))
+  (interactive)
+  (review-string-region "@<idx>{" "}"))
 
 ;; 吹き出し
 (defun review-balloon-comment (pattern &optional _force)
@@ -693,6 +761,9 @@ DTP担当へのメッセージ疑似マーカーを挿入します。"
 (defun review-zenkaku-mapping-rangle ()
   (interactive) "全角[" (review-zenkaku-mapping "]"))
 
+(defun review-zenkaku-mapping-plus ()
+  (interactive) "全角+" (review-zenkaku-mapping "+"))
+
 (defun review-zenkaku-mapping-minus ()
   (interactive) "全角-" (review-zenkaku-mapping "-"))
 
@@ -701,6 +772,9 @@ DTP担当へのメッセージ疑似マーカーを挿入します。"
 
 (defun review-zenkaku-mapping-slash ()
   (interactive) "全角/" (review-zenkaku-mapping "/"))
+
+(defun review-zenkaku-mapping-equal ()
+  (interactive) "全角=" (review-zenkaku-mapping "="))
 
 (defun review-zenkaku-mapping-yen ()
   (interactive) "全角￥" (review-zenkaku-mapping "\\"))
@@ -786,29 +860,35 @@ DTP担当を変更します。"
 (defun review-insert-index (start end)
   "選択領域を索引として領域の前に配置する"
   (interactive "r")
-  (let (review-index-buffer)
-    (save-restriction
-      (narrow-to-region start end)
-      (setq review-index-buffer (buffer-substring-no-properties start end))
-      (goto-char (point-min))
-      (insert "@<hidx>{" review-index-buffer "}")))
+  (if (region-active-p)
+      (let (review-index-buffer)
+	(save-restriction
+	  (narrow-to-region start end)
+	  (setq review-index-buffer (buffer-substring-no-properties start end))
+	  (goto-char (point-min))
+	  (insert "@<hidx>{" review-index-buffer "}")))
+    (message "索引にする範囲を選択してください")
+    )
   ;; FIXME:本当は、挿入位置の前の文字が{だったら@<>タグの可能性が高いので、
   ;; @<...>{ の@の前まで移動してから挿入したい
   )
 
-
 (defun review-index-change (start end)
   "選択領域を索引として追記する。索引からは()とスペースを取る"
   (interactive "r")
-  (let (review-index-buffer)
-    (save-restriction
-      (narrow-to-region start end)
-      (setq review-index-buffer (buffer-substring-no-properties start end))
-      (goto-char (point-min))
-      (while (re-search-forward "\(\\|\)\\| " nil t)
-	(replace-match "" nil nil))
-      (goto-char (point-max))
-      (insert "@" review-index-buffer))))
+  (if (region-active-p)
+      (let (review-index-buffer)
+	(save-restriction
+	  (narrow-to-region start end)
+	  (setq review-index-buffer (buffer-substring-no-properties start end))
+	  (goto-char (point-min))
+	  (while (re-search-forward "\(\\|\)\\| " nil t)
+	    (replace-match "" nil nil))
+	  (goto-char (point-max))
+	  (insert "@" review-index-buffer)))
+    (message "索引にする範囲を選択してください")
+    )
+  )
 
 (defun page-increment-region (pattern &optional _force start end)
   "選択領域のページ数を増減(DTP作業用)"
