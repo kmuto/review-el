@@ -86,7 +86,7 @@
 
 (declare-function skk-mode "skk-mode")
 
-(defconst review-version "1.13"
+(defconst review-version "1.14"
   "編集モードバージョン")
 
 ;;;; Custom Variables
@@ -502,17 +502,16 @@ Key bindings:
 
 ;; リージョン取り込み
 (defvar review-default-blockop "emlist")
-(defun review-block-region (start end pattern)
+(defun review-block-region (pattern)
   "選択領域を指定したタグで囲みます。"
   (interactive
-   (let ((string (completing-read (concat "タグ [" review-default-blockop "]: ") (append review-block-op review-block-op-single) nil nil)))
-     (list (region-beginning) (region-end) string)))
+   (list (completing-read (concat "タグ [" review-default-blockop "]: ") (append review-block-op review-block-op-single) nil nil)))
   (if (string= "" pattern)
       (setq pattern review-default-blockop)
     (setq review-default-blockop pattern))
   (cond ((region-active-p)
 	 (save-restriction
-	   (narrow-to-region start end)
+	   (narrow-to-region (region-beginning) (region-end))
 	   (goto-char (point-min))
 	   (cond ((member pattern review-block-op-single)
 		  (insert "//" pattern "\n")
@@ -536,18 +535,17 @@ Key bindings:
 	)))
 
 (defvar review-default-inlineop "b")
-(defun review-inline-region (start end pattern)
+(defun review-inline-region (pattern)
   "選択領域を指定したインラインタグで囲みます。"
   (interactive
-   (let ((string (completing-read (concat "タグ [" review-default-inlineop "]: ") review-inline-op nil nil)))
-     (list (region-beginning) (region-end) string)))
+   (list (completing-read (concat "タグ [" review-default-inlineop "]: ") review-inline-op nil nil)))
   (if (string= "" pattern)
       (setq pattern review-default-inlineop)
     (setq review-default-inlineop pattern))
   
   (cond ((region-active-p)
 	 (save-restriction
-	   (narrow-to-region start end)
+	   (narrow-to-region (region-beginning) (region-end))
 	   (goto-char (point-min))
 	   (insert "@<" pattern ">{")
 	   (goto-char (point-max))
