@@ -86,7 +86,7 @@
 
 (declare-function skk-mode "skk-mode")
 
-(defconst review-version "1.12"
+(defconst review-version "1.13"
   "編集モードバージョン")
 
 ;;;; Custom Variables
@@ -462,8 +462,12 @@
 
 ;; 補完キーワード
 (defvar review-block-op
-  '("bibpaper[][]" "blankline" "caution" "cmd" "embed[]" "emlist" "emlistnum" "emtable[]" "footnote[][]" "graph[][][]" "image[][]" "imgtable[][]" "important" "indepimage[]" "info" "lead" "list[][]" "listnum[][]" "memo" "noindent" "note" "notice" "numberlessimage[]" "quote" "raw" "read" "source" "table[][]" "texequation" "tip" "tsize[]" "warning")
+  '("bibpaper[][]" "caution" "cmd" "embed[]" "emlist" "emlistnum" "emtable[]" "graph[][][]" "image[][]" "imgtable[][]" "important" "indepimage[]" "info" "lead" "list[][]" "listnum[][]" "memo" "note" "notice" "numberlessimage[]" "quote" "read" "source" "table[][]" "texequation" "tip" "warning")
   "補完対象のブロック命令")
+
+(defvar review-block-op-single
+  '("blankline" "firstlinenum[]" "footnote[][]" "noindent" "raw" "tsize[]")
+  "補完対象のブロック命令(単一行)")
 
 (defvar review-inline-op
   '("ami" "b" "balloon" "bib" "bou" "br" "chap" "chapref" "chapter" "code" "column" "comment" "em" "embed" "eq" "fn" "hd" "hidx" "href" "i" "icon" "idx" "img" "kw" "list" "m" "raw" "ruby" "strong" "table" "tcy" "title" "tt" "ttb" "tti" "u" "uchar" "w" "wb")
@@ -501,26 +505,35 @@ Key bindings:
 (defun review-block-region (start end pattern)
   "選択領域を指定したタグで囲みます。"
   (interactive
-   (let ((string (completing-read (concat "タグ [" review-default-blockop "]: ") review-block-op nil nil)))
+   (let ((string (completing-read (concat "タグ [" review-default-blockop "]: ") (append review-block-op review-block-op-single) nil nil)))
      (list (region-beginning) (region-end) string)))
   (if (string= "" pattern)
       (setq pattern review-default-blockop)
     (setq review-default-blockop pattern))
-  (if (region-active-p)
-      (save-restriction
-	(narrow-to-region start end)
-	(goto-char (point-min))
-	(insert "//" pattern "{\n")
-	(goto-char (point-max))
-	(insert "//}\n"))
-  (progn
-    (setq review-position (point))
-    (insert "//" pattern "{\n")
-    (insert "//}\n")
-    (goto-char review-position)
-    (forward-word)
-    )
-  ))
+  (cond ((region-active-p)
+	 (save-restriction
+	   (narrow-to-region start end)
+	   (goto-char (point-min))
+	   (cond ((member pattern review-block-op-single)
+		  (insert "//" pattern "\n")
+		  )
+		 (t
+		  (insert "//" pattern "{\n")
+		  (goto-char (point-max))
+		  (insert "//}\n"))
+	   )))
+	(t
+	 (setq review-position (point))
+	 (cond ((member pattern review-block-op-single)
+		(insert "//" pattern "\n")
+		)
+	       (t
+		(insert "//" pattern "{\n")
+		(insert "//}\n")
+		(goto-char review-position)
+		(forward-word)
+	       ))
+	)))
 
 (defvar review-default-inlineop "b")
 (defun review-inline-region (start end pattern)
@@ -532,48 +545,35 @@ Key bindings:
       (setq pattern review-default-inlineop)
     (setq review-default-inlineop pattern))
   
-  (if (region-active-p)
-      (save-restriction
-	(narrow-to-region start end)
-	(goto-char (point-min))
-	(insert "@<" pattern ">{")
-	(goto-char (point-max))
-	(insert "}"))
-     (progn
-       (insert "@<" pattern ">{}")
-       (backward-char)
-       )
-     ))
+  (cond ((region-active-p)
+	 (save-restriction
+	   (narrow-to-region start end)
+	   (goto-char (point-min))
+	   (insert "@<" pattern ">{")
+	   (goto-char (point-max))
+	   (insert "}")))
+	(t
+	 (insert "@<" pattern ">{}")
+	 (backward-char)
+	 )
+	)
+     )
 
 ;; フォント付け
 (defun review-string-region (markb marke)
   "選択領域にフォントを設定"
-  (if (region-active-p)
-      (save-restriction
-	(narrow-to-region (region-beginning) (region-end))
-	(goto-char (point-min))
-	(insert markb)
-	(goto-char (point-max))
-	(insert marke))
-    (progn
-	(insert markb marke)
-	(backward-char)
+  (cond ((region-active-p)
+	 (save-restriction
+	   (narrow-to-region (region-beginning) (region-end))
+	   (goto-char (point-min))
+	   (insert markb)
+	   (goto-char (point-max))
+	   (insert marke)))
+	(t
+	 (insert markb marke)
+	 (backward-char))
       )
-    ))
-(defun review-string-region2 (markb marke start end)
-  "選択領域にフォントを設定"
-  (if (region-active-p)
-      (save-restriction
-	(narrow-to-region start end)
-	(goto-char (point-min))
-	(insert markb)
-	(goto-char (point-max))
-	(insert marke))
-    (progn
-	(insert markb marke)
-	(backward-char)
-      )
-    ))
+  )
 
 (defun review-bold-region ()
   "選択領域を太字タグ(@<b>)で囲みます"
