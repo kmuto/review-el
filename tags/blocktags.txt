@@ -2,6 +2,7 @@ list[][]
 listnum[][]
 emlist
 emlistnum
+firstlinenum[]	s
 cmd
 source
 image[][]
@@ -10,7 +11,7 @@ numberlessimage[]
 graph[][][]
 table[][]
 emtable[]
-tsize[]
+tsize[]	s
 imgtable[][]
 quote
 note
@@ -21,12 +22,12 @@ warning
 important
 caution
 notice
-footnote[][]
+footnote[][]	s
 bibpaper[][]
-noindent
+noindent	s
 lead
 read
 texequation
-blankline
-raw
+blankline	s
+raw	s
 embed[]
