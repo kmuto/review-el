@@ -1,5 +1,5 @@
 ;;; review-mode.el --- major mode for ReVIEW -*- lexical-binding: t -*-
-;; Copyright 2007-2019 Kenshi Muto <kmuto@kmuto.jp>
+;; Copyright 2007-2020 Kenshi Muto <kmuto@kmuto.jp>
 
 ;; Author: Kenshi Muto <kmuto@kmuto.jp>
 ;; URL: https://github.com/kmuto/review-el
@@ -85,8 +85,9 @@
 ;;; Code:
 
 (declare-function skk-mode "skk-mode")
+(declare-function whitespace-mode "whitespace-mode")
 
-(defconst review-version "1.15"
+(defconst review-version "1.16"
   "編集モードバージョン")
 
 ;;;; Custom Variables
@@ -437,6 +438,7 @@
 (defvar review-index-start "@<hidx>{" "索引タグの開始文字")
 (defvar review-index-end "}" "索引タグの終了文字")
 (defvar review-use-skk-mode nil "t:SKKモードで開始")
+(defvar review-use-whitespace-mode nil "t:whitespaceモードで開始")
 (defvar review-dtp-name nil "現在のDTP")
 (defvar review-use-em nil "t:C-c C-f C-eでiではなくemにする")
 
@@ -494,6 +496,7 @@ Key bindings:
 
   (auto-fill-mode 0)
   (if review-use-skk-mode (skk-mode))
+  (if review-use-whitespace-mode (whitespace-mode))
   ;; (setq-local comment-start "#@#")
   (setq-local font-lock-defaults '(review-font-lock-keywords))
   (when (fboundp 'font-lock-refresh-defaults) (font-lock-refresh-defaults))
