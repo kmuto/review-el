@@ -1,3 +1,5 @@
+[![MELPA](https://melpa.org/packages/review-mode-badge.svg)](https://melpa.org/#/review-mode)
+
 # Re:VIEW mode for Emacs
 
 review-mode.el は、Re:VIEWファイル (reファイル) の作成・変更を支援する Emacs モードです。
