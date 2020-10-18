@@ -270,12 +270,16 @@
   :group 'review-faces)
 
 (defface review-mode-underlinebold-face
-  '((t (:bold t :underline t :foreground "DarkBlue")))
+  '((default :weight bold :underline t)
+    (((class color) (background light)) :foreground "DarkBlue")
+    (((class color) (background dark)) :foreground "LightBlue"))
   "アンダーラインボールドのフェイス"
   :group 'review-faces)
 
 (defface review-mode-bold-face
-  '((t (:bold t :foreground "Blue")))
+  '((default :weight bold)
+    (((class color) (background light)) :foreground "Blue")
+    (((class color) (background dark)) :foreground "LightBlue"))
   "ボールドのフェイス"
   :group 'review-faces)
 
