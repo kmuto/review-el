@@ -223,32 +223,44 @@
   :group 'review-faces)
 
 (defface review-mode-title-face
-  '((t (:bold t :foreground "darkgreen")))
+  '((((class color) (background light)) :foreground "darkgreen")
+    (((class color) (background dark)) :foreground "spring green")
+    (t :weight bold))
   "タイトルのフェイス"
   :group 'review-faces)
 
 (defface review-mode-header1-face
-  '((t (:bold t :foreground "darkgreen")))
+  '((((class color) (background light)) :foreground "darkgreen")
+    (((class color) (background dark)) :foreground "spring green")
+    (t :weight bold))
   "ヘッダーのフェイス"
   :group 'review-faces)
 
 (defface review-mode-header2-face
-  '((t (:bold t :foreground "darkgreen")))
+  '((((class color) (background light)) :foreground "darkgreen")
+    (((class color) (background dark)) :foreground "spring green")
+    (t :weight bold))
   "ヘッダーのフェイス"
   :group 'review-faces)
 
 (defface review-mode-header3-face
-  '((t (:bold t :foreground "darkgreen")))
+  '((((class color) (background light)) :foreground "darkgreen")
+    (((class color) (background dark)) :foreground "spring green")
+    (t :weight bold))
   "ヘッダーのフェイス"
   :group 'review-faces)
 
 (defface review-mode-header4-face
-  '((t (:bold t :foreground "darkgreen")))
+  '((((class color) (background light)) :foreground "darkgreen")
+    (((class color) (background dark)) :foreground "spring green")
+    (t :weight bold))
   "ヘッダーのフェイス"
   :group 'review-faces)
 
 (defface review-mode-header5-face
-  '((t (:bold t :foreground "darkgreen")))
+  '((((class color) (background light)) :foreground "darkgreen")
+    (((class color) (background dark)) :foreground "spring green")
+    (t :weight bold))
   "ヘッダーのフェイス"
   :group 'review-faces)
 
