@@ -299,7 +299,9 @@
   :group 'review-faces)
 
 (defface review-mode-hide-face
-  '((t (:bold t :foreground "plum4")))
+  '((((class color) (background light)) :foreground "plum4")
+    (((class color) (background dark)) :foreground "plum2")
+    (t :weight bold))
   "indexのフェイス"
   :group 'review-faces)
 
@@ -309,7 +311,9 @@
   :group 'review-faces)
 
 (defface review-mode-ref-face
-  '((t (:bold t :foreground "yellow4")))
+  '((((class color) (background light)) :foreground "yellow4")
+    (((class color) (background dark)) :foreground "yellow2")
+    (t :weight bold))
   "参照のフェイス"
   :group 'review-faces)
 
