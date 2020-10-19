@@ -223,32 +223,44 @@
   :group 'review-faces)
 
 (defface review-mode-title-face
-  '((t (:bold t :foreground "darkgreen")))
+  '((((class color) (background light)) :foreground "darkgreen")
+    (((class color) (background dark)) :foreground "spring green")
+    (t :weight bold))
   "タイトルのフェイス"
   :group 'review-faces)
 
 (defface review-mode-header1-face
-  '((t (:bold t :foreground "darkgreen")))
+  '((((class color) (background light)) :foreground "darkgreen")
+    (((class color) (background dark)) :foreground "spring green")
+    (t :weight bold))
   "ヘッダーのフェイス"
   :group 'review-faces)
 
 (defface review-mode-header2-face
-  '((t (:bold t :foreground "darkgreen")))
+  '((((class color) (background light)) :foreground "darkgreen")
+    (((class color) (background dark)) :foreground "spring green")
+    (t :weight bold))
   "ヘッダーのフェイス"
   :group 'review-faces)
 
 (defface review-mode-header3-face
-  '((t (:bold t :foreground "darkgreen")))
+  '((((class color) (background light)) :foreground "darkgreen")
+    (((class color) (background dark)) :foreground "spring green")
+    (t :weight bold))
   "ヘッダーのフェイス"
   :group 'review-faces)
 
 (defface review-mode-header4-face
-  '((t (:bold t :foreground "darkgreen")))
+  '((((class color) (background light)) :foreground "darkgreen")
+    (((class color) (background dark)) :foreground "spring green")
+    (t :weight bold))
   "ヘッダーのフェイス"
   :group 'review-faces)
 
 (defface review-mode-header5-face
-  '((t (:bold t :foreground "darkgreen")))
+  '((((class color) (background light)) :foreground "darkgreen")
+    (((class color) (background dark)) :foreground "spring green")
+    (t :weight bold))
   "ヘッダーのフェイス"
   :group 'review-faces)
 
@@ -258,12 +270,16 @@
   :group 'review-faces)
 
 (defface review-mode-underlinebold-face
-  '((t (:bold t :underline t :foreground "DarkBlue")))
+  '((default :weight bold :underline t)
+    (((class color) (background light)) :foreground "DarkBlue")
+    (((class color) (background dark)) :foreground "LightBlue"))
   "アンダーラインボールドのフェイス"
   :group 'review-faces)
 
 (defface review-mode-bold-face
-  '((t (:bold t :foreground "Blue")))
+  '((default :weight bold)
+    (((class color) (background light)) :foreground "Blue")
+    (((class color) (background dark)) :foreground "LightBlue"))
   "ボールドのフェイス"
   :group 'review-faces)
 
@@ -283,7 +299,9 @@
   :group 'review-faces)
 
 (defface review-mode-hide-face
-  '((t (:bold t :foreground "plum4")))
+  '((((class color) (background light)) :foreground "plum4")
+    (((class color) (background dark)) :foreground "plum2")
+    (t :weight bold))
   "indexのフェイス"
   :group 'review-faces)
 
@@ -293,7 +311,9 @@
   :group 'review-faces)
 
 (defface review-mode-ref-face
-  '((t (:bold t :foreground "yellow4")))
+  '((((class color) (background light)) :foreground "yellow4")
+    (((class color) (background dark)) :foreground "yellow2")
+    (t :weight bold))
   "参照のフェイス"
   :group 'review-faces)
 
