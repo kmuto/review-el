@@ -5,10 +5,32 @@
 review-mode.el は、Re:VIEWファイル (reファイル) の作成・変更を支援する Emacs モードです。
 
 ## セットアップ
+
+### Emacs のパッケージングシステムを使わない場合
 review-mode.el を適当なロードパスに配置した上で、review-mode を読み込んでください。
 
-```
+```elisp
 (autoload 'review-mode "review-mode" "Re:VIEW Mode" t)
+```
+
+### Emacs のパッケージングシステムを使う場合
+[package.el](https://emacs-jp.github.io/packages/package-management/package-el) を用いて、
+review-mode.el をパッケージとしてインストールすることも可能です。
+MELPA に [review-mode](https://melpa.org/#/review-mode) として登録されているので、
+下記を設定ファイルに追加して読み込み直した上で、 `M-x package-install` を実行すればインストールと設定ができます。
+
+```elisp
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
+```
+
+パッケージの設定管理に [leaf](https://github.com/conao3/leaf.el) を使用している場合は、
+leaf をインストールした上で、下記を設定ファイルに追加して読み込み直せばインストールと設定ができます。
+
+```elisp
+(leaf review-mode :ensure t)
 ```
 
 ## 機能
