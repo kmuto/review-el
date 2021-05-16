@@ -1,5 +1,5 @@
 ;;; review-mode.el --- major mode for ReVIEW -*- lexical-binding: t -*-
-;; Copyright 2007-2020 Kenshi Muto <kmuto@kmuto.jp>
+;; Copyright 2007-2021 Kenshi Muto <kmuto@kmuto.jp>
 
 ;; Author: Kenshi Muto <kmuto@kmuto.jp>
 ;; URL: https://github.com/kmuto/review-el
@@ -34,6 +34,7 @@
 ;; C-c C-t 2 DTP担当の変更
 ;;
 ;; C-c C-e 選択範囲をブロックタグで囲む。選択されていない場合は新規に挿入する。新規タブで補完可
+;; C-c C-o 選択範囲を //beginchild 〜 //endchild で囲む
 ;; C-c C-f C-f 選択範囲をインラインタグで囲む。選択されていない場合は新規に挿入する。タブで補完可
 ;; C-c C-f b 太字タグ(@<b>)で囲む
 ;; C-c C-f C-b 同上
@@ -87,7 +88,7 @@
 (declare-function skk-mode "skk-mode")
 (declare-function whitespace-mode "whitespace-mode")
 
-(defconst review-version "1.16"
+(defconst review-version "1.17"
   "編集モードバージョン")
 
 ;;;; Custom Variables
@@ -107,6 +108,7 @@
 (defvar review-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map "\C-c\C-e" 'review-block-region)
+    (define-key map "\C-c\C-o" 'review-child-region)
     (define-key map "\C-c\C-f\C-f" 'review-inline-region)
     (define-key map "\C-c\C-fb" 'review-bold-region)
     (define-key map "\C-c\C-fa" 'review-underline-italic-region)
@@ -167,7 +169,6 @@
     (define-key map "\C-c\C-y" 'review-index-change)
     map)
   "Keymap for `revew-mode'.")
-
 
 ;;;; Syntax Table
 
@@ -556,6 +557,19 @@ Key bindings:
 		(forward-word)
 	       ))
 	)))
+
+;; beginchild/endchild囲み
+(defun review-child-region ()
+  "選択領域を//beginchild, //endchildで囲みます。"
+  (interactive)
+  (cond ((region-active-p)
+	 (save-restriction
+	   (narrow-to-region (region-beginning) (region-end))
+	   (goto-char (point-min))
+	   (insert "//beginchild\n\n")
+	   (goto-char (point-max))
+	   (insert "\n//endchild\n")))
+	))
 
 (defvar review-default-inlineop "b")
 (defun review-inline-region (pattern)
