@@ -135,6 +135,7 @@
     (define-key map "\C-c!" 'review-kokomade)
     (define-key map "\C-c\C-a" 'review-normal-comment)
     (define-key map "\C-c\C-b" 'review-balloon-comment)
+    (define-key map "\C-c\C-b" 'review-compile)
     (define-key map "\C-c\C-d" 'review-dtp-comment)
     (define-key map "\C-c\C-k" 'review-tip-comment)
     (define-key map "\C-c\C-r" 'review-reference-comment)
@@ -580,7 +581,7 @@ Key bindings:
   (if (string= "" pattern)
       (setq pattern review-default-inlineop)
     (setq review-default-inlineop pattern))
-  
+
   (cond ((region-active-p)
 	 (save-restriction
 	   (narrow-to-region (region-beginning) (region-end))
@@ -957,7 +958,36 @@ DTP担当を変更します。"
   (goto-char (match-beginning 0))
   (insert "@<tt>{")
   (goto-char (+ 7 (match-end 0)))
-)
+  )
+
+;;; Compile用のコマンド
+(defun review-compile ()
+  "Run rake command on the current document."
+  (interactive)
+  (cond
+   ((file-exists-p "Rakefile")
+    (review-compile-exec-command)
+    )
+   ((file-exists-p "../Rakefile")
+    (let ((current-dir default-directory))
+      (cd "..")
+      (review-compile-exec-command)
+      (cd current-dir)))
+   (t
+    (message "Rakefile not found!"))
+   ))
+
+(defvar review-compile-previous-command nil
+  "Store the previous compile command.")
+
+(defun review-compile-exec-command ()
+  "Execute rake command."
+  (call-interactively
+   'compile
+   (if review-compile-previous-command
+       review-compile-previous-command
+     "rake pdf"
+     )))
 
 ;; Associate .re files with review-mode
 ;;;###autoload
