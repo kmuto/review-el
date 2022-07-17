@@ -135,7 +135,7 @@
     (define-key map "\C-c!" 'review-kokomade)
     (define-key map "\C-c\C-a" 'review-normal-comment)
     (define-key map "\C-c\C-b" 'review-balloon-comment)
-    (define-key map "\C-c\C-b" 'review-compile)
+    (define-key map "\C-c\C-c" 'review-compile)
     (define-key map "\C-c\C-d" 'review-dtp-comment)
     (define-key map "\C-c\C-k" 'review-tip-comment)
     (define-key map "\C-c\C-r" 'review-reference-comment)
