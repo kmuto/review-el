@@ -521,6 +521,7 @@ Key bindings:
   (if review-use-skk-mode (skk-mode))
   (if review-use-whitespace-mode (whitespace-mode))
   ;; (setq-local comment-start "#@#")
+  (setq-local compile-command "rake pdf")
   (setq-local font-lock-defaults '(review-font-lock-keywords))
   (when (fboundp 'font-lock-refresh-defaults) (font-lock-refresh-defaults))
   (use-local-map review-mode-map)
@@ -977,17 +978,9 @@ DTP担当を変更します。"
     (message "Rakefile not found!"))
    ))
 
-(defvar review-compile-previous-command nil
-  "Store the previous compile command.")
-
 (defun review-compile-exec-command ()
   "Execute rake command."
-  (call-interactively
-   'compile
-   (if review-compile-previous-command
-       review-compile-previous-command
-     "rake pdf"
-     )))
+  (call-interactively 'compile))
 
 ;; Associate .re files with review-mode
 ;;;###autoload
