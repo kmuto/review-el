@@ -135,6 +135,7 @@
     (define-key map "\C-c!" 'review-kokomade)
     (define-key map "\C-c\C-a" 'review-normal-comment)
     (define-key map "\C-c\C-b" 'review-balloon-comment)
+    (define-key map "\C-c\C-c" 'review-compile)
     (define-key map "\C-c\C-d" 'review-dtp-comment)
     (define-key map "\C-c\C-k" 'review-tip-comment)
     (define-key map "\C-c\C-r" 'review-reference-comment)
@@ -520,6 +521,7 @@ Key bindings:
   (if review-use-skk-mode (skk-mode))
   (if review-use-whitespace-mode (whitespace-mode))
   ;; (setq-local comment-start "#@#")
+  (setq-local compile-command "rake pdf")
   (setq-local font-lock-defaults '(review-font-lock-keywords))
   (when (fboundp 'font-lock-refresh-defaults) (font-lock-refresh-defaults))
   (use-local-map review-mode-map)
@@ -580,7 +582,7 @@ Key bindings:
   (if (string= "" pattern)
       (setq pattern review-default-inlineop)
     (setq review-default-inlineop pattern))
-  
+
   (cond ((region-active-p)
 	 (save-restriction
 	   (narrow-to-region (region-beginning) (region-end))
@@ -957,7 +959,28 @@ DTP担当を変更します。"
   (goto-char (match-beginning 0))
   (insert "@<tt>{")
   (goto-char (+ 7 (match-end 0)))
-)
+  )
+
+;;; Compile用のコマンド
+(defun review-compile ()
+  "Run rake command on the current document."
+  (interactive)
+  (cond
+   ((file-exists-p "Rakefile")
+    (review-compile-exec-command)
+    )
+   ((file-exists-p "../Rakefile")
+    (let ((current-dir default-directory))
+      (cd "..")
+      (review-compile-exec-command)
+      (cd current-dir)))
+   (t
+    (message "Rakefile not found!"))
+   ))
+
+(defun review-compile-exec-command ()
+  "Execute rake command."
+  (call-interactively 'compile))
 
 ;; Associate .re files with review-mode
 ;;;###autoload
