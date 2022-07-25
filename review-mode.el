@@ -520,7 +520,7 @@ Key bindings:
   (auto-fill-mode 0)
   (if review-use-skk-mode (skk-mode))
   (if review-use-whitespace-mode (whitespace-mode))
-  ;; (setq-local comment-start "#@#")
+  (setq-local comment-start "#@#")
   (setq-local compile-command "rake pdf")
   (setq-local font-lock-defaults '(review-font-lock-keywords))
   (when (fboundp 'font-lock-refresh-defaults) (font-lock-refresh-defaults))
