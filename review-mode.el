@@ -25,6 +25,8 @@
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;
+;; C-c C-c ビルドを実行する。デフォルトの呼び出しはrake pdfのみだが、編集して実行すれば履歴に登録される
+;;
 ;; C-c C-a ユーザーから編集者へのメッセージ擬似マーカー
 ;; C-c C-k ユーザー注釈の擬似マーカー
 ;; C-c C-d DTP担当へのメッセージ擬似マーカー
@@ -88,7 +90,7 @@
 (declare-function skk-mode "skk-mode")
 (declare-function whitespace-mode "whitespace-mode")
 
-(defconst review-version "1.18"
+(defconst review-version "1.19"
   "編集モードバージョン")
 
 ;;;; Custom Variables
@@ -491,11 +493,11 @@
   "補完対象のブロック命令")
 
 (defvar review-block-op-single
-  '("blankline" "firstlinenum[]" "footnote[][]" "noindent" "raw" "tsize[]")
+  '("beginchild" "blankline" "endchild" "endnote[][]" "firstlinenum[]" "footnote[][]" "noindent" "printendnotes" "raw" "tsize[]")
   "補完対象のブロック命令(単一行)")
 
 (defvar review-inline-op
-  '("ami" "b" "balloon" "bib" "bou" "br" "chap" "chapref" "chapter" "code" "column" "comment" "em" "embed" "eq" "fn" "hd" "hidx" "href" "i" "icon" "idx" "img" "kw" "list" "m" "raw" "ruby" "strong" "table" "tcy" "title" "tt" "ttb" "tti" "u" "uchar" "w" "wb")
+  '("ami" "b" "balloon" "bib" "bou" "br" "chap" "chapref" "chapter" "code" "column" "comment" "em" "embed" "endnote" "eq" "fn" "hd" "hidx" "href" "i" "icon" "idx" "img" "kw" "list" "m" "raw" "ruby" "sec" "secref" "sectitle" "strong" "table" "tcy" "title" "tt" "ttb" "tti" "u" "uchar" "w" "wb")
   "補完対象のインライン命令")
 
 (defvar review-uri-regexp
