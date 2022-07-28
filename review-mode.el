@@ -527,38 +527,6 @@ Key bindings:
 
 ;; リージョン取り込み
 (defvar review-default-blockop "emlist")
-;; (defun review-block-region (pattern)
-;;   "選択領域を指定したタグで囲みます。"
-;;   (interactive
-;;    (list (completing-read
-;;           (concat "タグ [" review-default-blockop "]: ")
-;;           (append review-block-op review-block-op-single) nil nil)))
-;;   (let ((pattern (if (string= "" pattern) review-default-blockop pattern)))
-;;     (cond
-;;      ((region-active-p)
-;; 	  (save-restriction
-;; 	    (narrow-to-region (region-beginning) (region-end))
-;; 	    (goto-char (point-min))
-;; 	    (cond
-;;          ((member pattern review-block-op-single)
-;; 		  (insert "//" pattern "\n"))
-;; 		 (t
-;; 		  (insert "//" pattern "{\n")
-;; 		  (goto-char (point-max))
-;; 		  (insert "//}\n")))))
-;;      (t
-;; 	  (let ((review-position (point)))
-;;         (cond
-;;          ((member pattern review-block-op-single)
-;; 		  (insert "//" pattern "\n")
-;; 		  )
-;; 	     (t
-;; 		  (insert "//" pattern "{\n")
-;; 		  (insert "//}\n")
-;; 		  (goto-char review-position)
-;; 		  (forward-word)
-;; 	      )))))))
-
 (defun review-block-region (arg)
   "選択領域を指定したタグで囲みます.
 
@@ -632,7 +600,7 @@ Key bindings:
   (if (string= "" pattern)
       (setq pattern review-default-inlineop)
     (setq review-default-inlineop pattern))
-  
+
   (cond ((region-active-p)
 	 (save-restriction
 	   (narrow-to-region (region-beginning) (region-end))
