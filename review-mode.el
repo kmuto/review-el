@@ -533,7 +533,7 @@ Key bindings:
 もしRegionが選択されていたら, その領域を指定したタグで囲みます。
 もしRegionが選択されていなかったら, 現在のポイントをタグで囲みます.
 もしARGありで呼ばれた場合は、Regionが選択されているかによらず,
-ポインタ位置より前の最も近いタグを変更します."
+カーソル位置より前の最も近いタグを変更します."
   (interactive "*P")
   (let* ((pattern (completing-read
                    (concat "タグ [" review-default-blockop "]: ")
@@ -548,36 +548,42 @@ Key bindings:
 (defun review-modify-previous-block (pattern)
   "現在位置をの一つ前のタグをPATTERNに変更する."
   (save-excursion
-    (re-search-backward (concat "//.+{"))
+    (re-search-backward (concat "//" ".+{"))
     (replace-match (concat "//" pattern "{"))
     ))
 
 (defun review-insert-block (pattern)
   "PATTERNタグを挿入する."
   (cond
-     ((region-active-p)
-	  (save-restriction
-	    (narrow-to-region (region-beginning) (region-end))
-	    (goto-char (point-min))
-	    (cond
-         ((member pattern review-block-op-single)
-		  (insert "//" pattern "\n"))
-	     (t
-		  (insert "//" pattern "{\n")
-		  (goto-char (point-max))
-		  (insert "//}\n")))))
+   ((region-active-p)
+	(save-restriction
+	  (narrow-to-region (region-beginning) (region-end))
+	  (goto-char (point-min))
+	  (cond
+       ((member pattern review-block-op-single)
+		(insert "//" pattern)
+        (newline))
+	   (t
+		(insert "//" pattern "{")
+        (newline)
+		(goto-char (point-max))
+		(insert "//" "}")
+        (newline)))))
+   (t
+	(cond
+     ((member pattern review-block-op-single)
+	  (insert "//" pattern)
+      (newline))
      (t
-	  (let ((review-position (point)))
-        (cond
-         ((member pattern review-block-op-single)
-		  (insert "//" pattern "\n"))
-	     (t
-		  (insert "//" pattern "{\n")
-		  (insert "//}\n")
-		  (goto-char review-position)
-		  (forward-word)
-	      )))))
-    )
+      (save-excursion
+        (insert "//" pattern "{")
+        (newline)
+		(insert "//" "}")
+        (newline))
+      (re-search-forward "{")
+	  )))
+   )
+)
 
 ;; beginchild/endchild囲み
 (defun review-child-region ()
