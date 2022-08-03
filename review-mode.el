@@ -580,10 +580,10 @@ Key bindings:
         (newline)
 		(insert "//" "}")
         (newline))
-      (re-search-forward "{")
-	  )))
-   )
-)
+      (forward-word)
+      (forward-char)
+      )))
+   ))
 
 ;; beginchild/endchild囲み
 (defun review-child-region ()
