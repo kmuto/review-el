@@ -530,7 +530,7 @@ Key bindings:
 (defun review-block-region (arg)
   "選択領域を指定したタグで囲みます.
 
-もしRegionが選択されていたら, その領域を指定したタグで囲みます。
+もしRegionが選択されていたら, その領域を指定したタグで囲みます.
 もしRegionが選択されていなかったら, 現在のポイントをタグで囲みます.
 もしARGありで呼ばれた場合は、Regionが選択されているかによらず,
 カーソル位置より前の最も近いタグを変更します."
@@ -548,9 +548,10 @@ Key bindings:
 (defun review-modify-previous-block (pattern)
   "現在位置をの一つ前のタグをPATTERNに変更する."
   (save-excursion
-    (re-search-backward (concat "//" ".+{"))
-    (replace-match (concat "//" pattern "{"))
-    ))
+    (if (re-search-backward (concat "//" ".+{"))
+        (replace-match (concat "//" pattern "{"))
+      (message "カーソル位置より前にタグが見つかりません.")
+    )))
 
 (defun review-insert-block (pattern)
   "PATTERNタグを挿入する."
