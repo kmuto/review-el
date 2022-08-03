@@ -577,27 +577,28 @@ Key bindings:
 	))
 
 (defvar review-default-inlineop "b")
-(defun review-inline-region (pattern)
-  "選択領域を指定したインラインタグで囲みます。"
-  (interactive
-   (list (completing-read (concat "タグ [" review-default-inlineop "]: ") review-inline-op nil nil)))
-  (if (string= "" pattern)
-      (setq pattern review-default-inlineop)
-    (setq review-default-inlineop pattern))
-
-  (cond ((region-active-p)
-	 (save-restriction
-	   (narrow-to-region (region-beginning) (region-end))
-	   (goto-char (point-min))
-	   (insert "@<" pattern ">{")
-	   (goto-char (point-max))
-	   (insert "}")))
-	(t
-	 (insert "@<" pattern ">{}")
-	 (backward-char)
-	 )
-	)
-     )
+(defun review-inline-region ()
+  "選択領域を指定したインラインタグで囲みます."
+  (interactive)
+  (let* ((pattern (completing-read
+                   (concat "タグ [" review-default-inlineop "]: ")
+                   review-inline-op
+                   nil nil nil nil review-default-inlineop)))
+    (unless (equal review-default-inlineop pattern)
+      (setq review-default-inlineop pattern))
+    (cond
+     ((region-active-p)
+	  (save-restriction
+	    (narrow-to-region (region-beginning) (region-end))
+	    (goto-char (point-min))
+	    (insert "@<" pattern ">{")
+	    (goto-char (point-max))
+	    (insert "}")))
+	 (t
+	  (insert "@<" pattern ">{}")
+	  (backward-char)
+	  ))
+    ))
 
 ;; フォント付け
 (defun review-string-region (markb marke)
