@@ -535,9 +535,9 @@ Key bindings:
   "選択領域を指定したタグで囲みます.
 
 もしRegionが選択されていたら, その領域を指定したタグで囲みます.
-もしRegionが選択されていなかったら, 現在のポイントをタグで囲みます.
-もしARGありで呼ばれた場合は、Regionが選択されているかによらず,
-カーソル位置より前の最も近いタグを変更します."
+もしRegionが選択されていなかったら, 現在のカーソル位置をタグで囲
+みます.  もしARGありで呼ばれた場合は、Regionが選択されているかに
+よらず, カーソル位置より前の, 最も近いタグを変更します."
   (interactive "*P")
   (let* ((pattern (completing-read
                    (concat "タグ [" review-default-blockop "]: ")
@@ -550,7 +550,7 @@ Key bindings:
       (review-insert-block pattern))))
 
 (defun review-modify-previous-block (pattern)
-  "現在位置をの一つ前のタグをPATTERNに変更する."
+  "現在位置の一つ前のタグをPATTERNに変更する."
   (save-excursion
     (if (re-search-backward (concat "//" ".+{"))
         (replace-match (concat "//" pattern "{"))
