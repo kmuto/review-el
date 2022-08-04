@@ -748,6 +748,51 @@ DTP担当へのメッセージ疑似マーカーを挿入します。"
   (interactive "s索引: \nP")
   (insert review-index-start pattern review-index-end))
 
+(defun review-insert-index ()
+  "索引 @<hidx>{} 挿入用の関数.
+
+領域が選択されているか、それがインラインタグのカッコ内全部,
+つまり, @<tag>{XYZ}のXYZであるかに応じて以下のように動作が変わる.
+なお, @<tag>{XYZ}でXYやYZのみが選択されていた場合は 3番の動作になる.
+
+1. 領域が選択されていなかったら, ユーザーの入力を受け取りそれを索
+引としてカーソル位置に挿入する.  これは `review-index-comment' と
+同様の動作である.
+
+2. 領域が選択されていて, それがインラインタグのカッコ内全てであれ
+ばその内容をタグの直前に索引として挿入する.
+
+3. それ以外の場合で、領域が選択されているときは選択領域を索引とし
+て領域の直前に挿入する."
+  (interactive)
+  (cond
+   ((region-active-p)
+    (let* ((start (region-beginning))
+           (end (region-end))
+           (review-index-buffer (buffer-substring-no-properties start end))
+           (string-after (char-to-string (char-after end)))
+           (strings-before
+            (concat
+             (char-to-string (char-before (- start 1)))
+             (char-to-string (char-before start)))))
+      ;; インラインタグ内の全領域かの判定.
+      ;; regionの直前の文字が ">{"で直後が "}" だったら@<.+?>{を探し,
+      ;; マッチした位置の終わりがregionの始まりに一致した場合は,
+      ;; @の直前をstartに変更する.
+      (when (and (equal string-after "}")
+                 (equal strings-before ">{")
+                 (re-search-backward "@<.+?[^}]>{" nil t)
+                 (= start (match-end 0)))
+        (setq start (point)))
+	  (save-restriction
+	    (narrow-to-region start end)
+        (goto-char (point-min))
+	    (insert "@<hidx>{" review-index-buffer "}"))))
+   (t
+    (let ((pattern (read-from-minibuffer "索引: ")))
+      (insert review-index-start pattern review-index-end))))
+  )
+
 ;; ヘッダ
 (defun review-header (pattern &optional _force)
   "見出しを挿入"
@@ -896,22 +941,6 @@ DTP担当を変更します。"
     (setq review-mode-name (car list))
     ;;(setq review-tip-name (cdr list))
     ))
-
-(defun review-insert-index (start end)
-  "選択領域を索引として領域の前に配置する"
-  (interactive "r")
-  (if (region-active-p)
-      (let (review-index-buffer)
-	(save-restriction
-	  (narrow-to-region start end)
-	  (setq review-index-buffer (buffer-substring-no-properties start end))
-	  (goto-char (point-min))
-	  (insert "@<hidx>{" review-index-buffer "}")))
-    (message "索引にする範囲を選択してください")
-    )
-  ;; FIXME:本当は、挿入位置の前の文字が{だったら@<>タグの可能性が高いので、
-  ;; @<...>{ の@の前まで移動してから挿入したい
-  )
 
 (defun review-index-change (start end)
   "選択領域を索引として追記する。索引からは()とスペースを取る"
