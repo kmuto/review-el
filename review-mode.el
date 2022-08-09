@@ -36,6 +36,7 @@
 ;; C-c C-t 2 DTP担当の変更
 ;;
 ;; C-c C-e 選択範囲をブロックタグで囲む。選択されていない場合は新規に挿入する。新規タブで補完可
+;; C-u C-c C-e 直前のブロックタグの名前を変更する
 ;; C-c C-o 選択範囲を //beginchild 〜 //endchild で囲む
 ;; C-c C-f C-f 選択範囲をインラインタグで囲む。選択されていない場合は新規に挿入する。タブで補完可
 ;; C-c C-f b 太字タグ(@<b>)で囲む
@@ -90,7 +91,7 @@
 (declare-function skk-mode "skk-mode")
 (declare-function whitespace-mode "whitespace-mode")
 
-(defconst review-version "1.19"
+(defconst review-version "1.20"
   "編集モードバージョン")
 
 ;;;; Custom Variables
@@ -141,7 +142,7 @@
     (define-key map "\C-c\C-d" 'review-dtp-comment)
     (define-key map "\C-c\C-k" 'review-tip-comment)
     (define-key map "\C-c\C-r" 'review-reference-comment)
-    (define-key map "\C-c\C-m" 'review-index-comment)
+    (define-key map "\C-c\C-m" 'review-insert-index)
     (define-key map "\C-c\C-w" 'review-insert-index)
     (define-key map "\C-c\C-p" 'review-header)
     (define-key map "\C-c," 'review-br)
@@ -771,11 +772,6 @@ DTP担当へのメッセージ疑似マーカーを挿入します。"
           review-mode-name review-comment-end))
 
 ;; 索引
-(defun review-index-comment (pattern &optional _force)
-  "索引ワードを挿入"
-  (interactive "s索引: \nP")
-  (insert review-index-start pattern review-index-end))
-
 (defun review-insert-index ()
   "索引 @<hidx>{} 挿入用の関数.
 
@@ -784,8 +780,7 @@ DTP担当へのメッセージ疑似マーカーを挿入します。"
 なお, @<tag>{XYZ}でXYやYZのみが選択されていた場合は 3番の動作になる.
 
 1. 領域が選択されていなかったら, ユーザーの入力を受け取りそれを索
-引としてカーソル位置に挿入する.  これは `review-index-comment' と
-同様の動作である.
+引としてカーソル位置に挿入する.
 
 2. 領域が選択されていて, それがインラインタグのカッコ内全てであれ
 ばその内容をタグの直前に索引として挿入する.
