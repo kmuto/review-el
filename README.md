@@ -49,6 +49,7 @@ reファイルを開いたときに命令に応じたカラーリングが自動
 - C-c C-t 2 DTP担当の変更
 
 - C-c C-e 選択範囲をブロックタグで囲む。選択されていない場合は新規に挿入する。新規タブで補完可
+- C-u C-c C-e 直前のブロックタグの名前を変更する
 - C-c C-o 選択範囲を //beginchild 〜 //endchild で囲む
 - C-c C-f C-f 選択範囲をインラインタグで囲む。選択されていない場合は新規に挿入する。タブで補完可
 - C-c C-f b 太字タグ(@\<b\>)で囲む
@@ -103,4 +104,4 @@ reファイルを開いたときに命令に応じたカラーリングが自動
 ```
 
 ## ライセンス
-GNU General Public License version 2 (COPYING を参照してください)
+GNU General Public License version 3 (COPYING を参照してください)
