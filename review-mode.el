@@ -531,37 +531,64 @@ Key bindings:
 
 ;; リージョン取り込み
 (defvar review-default-blockop "emlist")
-(defun review-block-region (pattern)
-  "選択領域を指定したタグで囲みます。"
-  (interactive
-   (list (completing-read (concat "タグ [" review-default-blockop "]: ") (append review-block-op review-block-op-single) nil nil)))
-  (if (string= "" pattern)
-      (setq pattern review-default-blockop)
-    (setq review-default-blockop pattern))
-  (cond ((region-active-p)
-	 (save-restriction
-	   (narrow-to-region (region-beginning) (region-end))
-	   (goto-char (point-min))
-	   (cond ((member pattern review-block-op-single)
-		  (insert "//" pattern "\n")
-		  )
-		 (t
-		  (insert "//" pattern "{\n")
-		  (goto-char (point-max))
-		  (insert "//}\n"))
-	   )))
-	(t
-	 (setq review-position (point))
-	 (cond ((member pattern review-block-op-single)
-		(insert "//" pattern "\n")
-		)
-	       (t
-		(insert "//" pattern "{\n")
-		(insert "//}\n")
-		(goto-char review-position)
-		(forward-word)
-	       ))
-	)))
+(defun review-block-region (arg)
+  "選択領域を指定したタグで囲みます.
+
+もしRegionが選択されていたら, その領域を指定したタグで囲みます.
+もしRegionが選択されていなかったら, 現在のカーソル位置をタグで囲
+みます.  もしARGありで呼ばれた場合は、Regionが選択されているかに
+よらず, カーソル位置より前の, 最も近いタグを変更します."
+  (interactive "*P")
+  (let* ((pattern (completing-read
+                   (concat "タグ [" review-default-blockop "]: ")
+                   (append review-block-op review-block-op-single)
+                   nil nil nil nil review-default-blockop)))
+    (unless (equal review-default-blockop pattern)
+      (setq review-default-blockop pattern))
+    (if arg
+        (review-modify-previous-block pattern)
+      (review-insert-block pattern))))
+
+(defun review-modify-previous-block (pattern)
+  "現在位置の一つ前のタグをPATTERNに変更する."
+  (save-excursion
+    (if (re-search-backward (concat "//" ".+{"))
+        (replace-match (concat "//" pattern "{"))
+      (message "カーソル位置より前にタグが見つかりません.")
+    )))
+
+(defun review-insert-block (pattern)
+  "PATTERNタグを挿入する."
+  (cond
+   ((region-active-p)
+	(save-restriction
+	  (narrow-to-region (region-beginning) (region-end))
+	  (goto-char (point-min))
+	  (cond
+       ((member pattern review-block-op-single)
+		(insert "//" pattern)
+        (newline))
+	   (t
+		(insert "//" pattern "{")
+        (newline)
+		(goto-char (point-max))
+		(insert "//" "}")
+        (newline)))))
+   (t
+	(cond
+     ((member pattern review-block-op-single)
+	  (insert "//" pattern)
+      (newline))
+     (t
+      (save-excursion
+        (insert "//" pattern "{")
+        (newline)
+		(insert "//" "}")
+        (newline))
+      (forward-word)
+      (forward-char)
+      )))
+   ))
 
 ;; beginchild/endchild囲み
 (defun review-child-region ()
