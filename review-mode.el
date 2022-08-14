@@ -25,7 +25,9 @@
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;
-;; C-c C-c ビルドを実行する。デフォルトの呼び出しはrake pdfのみだが、編集して実行すれば履歴に登録される
+;; C-c C-c ビルドを実行する。初回実行時は
+;;         `review-default-compile-command' (デフォルト値 "rake pdf")
+;;         が呼ばれ2回め以降は前回実行時のコマンドが履歴に登録される.
 ;;
 ;; C-c C-a ユーザーから編集者へのメッセージ擬似マーカー
 ;; C-c C-k ユーザー注釈の擬似マーカー
@@ -104,6 +106,11 @@
 (defcustom review-mode-hook nil
   "Normal hook when entering `review-mode'."
   :type 'hook
+  :group 'review-mode)
+
+(defcustom review-default-compile-command "rake pdf"
+  "Default compile command."
+  :type 'string
   :group 'review-mode)
 
 ;;;; Mode Map
@@ -524,7 +531,7 @@ Key bindings:
   (if review-use-skk-mode (skk-mode))
   (if review-use-whitespace-mode (whitespace-mode))
   (setq-local comment-start "#@#")
-  (setq-local compile-command "rake pdf")
+  (setq-local compile-command review-default-compile-command)
   (setq-local font-lock-defaults '(review-font-lock-keywords))
   (when (fboundp 'font-lock-refresh-defaults) (font-lock-refresh-defaults))
   (use-local-map review-mode-map)
