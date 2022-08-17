@@ -93,8 +93,8 @@
 (declare-function skk-mode "skk-mode")
 (declare-function whitespace-mode "whitespace-mode")
 
-(defconst review-version "1.20"
-  "編集モードバージョン")
+(defconst review-version "1.21"
+  "Re:VIEWモードバージョン")
 
 ;;;; Custom Variables
 
@@ -180,6 +180,79 @@
     (define-key map "\C-c\C-y" 'review-index-change)
     map)
   "Keymap for `revew-mode'.")
+
+
+;;;; Outline & Imenu support
+(defvar review-section-alist
+  '(("=" . 0)
+    ("==" . 1)
+    ("===" . 2)
+    ("====" . 3)
+    ("=====" . 4)))
+
+(defvar review-outline-regexp
+  "^\\(=\\{1,5\\}\\)\\(\\[.+\\]\\)?\\({.+}\\)? "
+  "The regexp matches the outline of Re:VIEW format.
+
+This matches =[nonum], ==[column]{label}, and ==={label} etc.
+[CAUTION] It also matches the expression ={label}, which is not
+allowed in Re:VIEW format.")
+
+;; This function was originally derived from `latex-outline-level'
+;; from tex-mode.el.
+(defun review-outline-level ()
+  "Return the outline level."
+  (interactive)
+  (if (looking-at review-outline-regexp)
+      (1+ (or (cdr (assoc (match-string 1) review-section-alist)) -1))
+    1000))
+
+;; This function was originally derived from `tex-current-defun-name'
+;; from tex-mode.el.
+(defun review-current-defun-name ()
+  "Return the name of the Re:VIEW section or chapter at point, or nil."
+  (save-excursion
+    (when (re-search-backward review-outline-regexp nil t)
+      (goto-char (match-end 0))
+      (buffer-substring-no-properties
+       (point)
+       (line-end-position)))))
+
+(defcustom review-imenu-indent-string ". "
+  "String to add repeated in front of nested sectional units for Imenu.
+An alternative value is \" . \", if you use a font with a narrow period."
+  :type 'string
+  :group 'review-mode)
+
+;; This function was originally derived from
+;; `latex-imenu-create-index' from tex-mode.el.
+(defun review-imenu-create-index ()
+  "Generate an alist for imenu from a Re:VIEW buffer."
+  (let (menu)
+    (save-excursion
+      (goto-char (point-min))
+      (while (search-forward-regexp review-outline-regexp nil t)
+	    (let ((start (match-beginning 0))
+	          (here (point))
+              (i (cdr (assoc (buffer-substring-no-properties
+			                  (match-beginning 1)
+			                  (match-end 1))
+			                 review-section-alist))))
+          (end-of-line)
+	      (condition-case nil
+	          (progn
+		        (push
+                 (cons
+                  (concat (apply #'concat
+					             (make-list i
+					              review-imenu-indent-string))
+				          (buffer-substring-no-properties
+				           here (point)))
+			      start)
+		         menu))
+	        (error nil))))
+      ;; Sort in increasing buffer position order.
+      (sort menu (lambda (a b) (< (cdr a) (cdr b)))))))
 
 ;;;; Syntax Table
 
@@ -532,6 +605,10 @@ Key bindings:
   (if review-use-whitespace-mode (whitespace-mode))
   (setq-local comment-start "#@#")
   (setq-local compile-command review-default-compile-command)
+  (setq-local outline-regexp review-outline-regexp)
+  (setq-local outline-level #'review-outline-level)
+  (setq-local add-log-current-defun-function #'review-current-defun-name)
+  (setq-local imenu-create-index-function #'review-imenu-create-index)
   (setq-local font-lock-defaults '(review-font-lock-keywords))
   (when (fboundp 'font-lock-refresh-defaults) (font-lock-refresh-defaults))
   (use-local-map review-mode-map)
