@@ -403,7 +403,7 @@ An alternative value is \" . \", if you use a font with a narrow period."
   :group 'review-faces)
 
 (defface review-mode-fullwidth-hyphen-minus-face
-  '((t (:foreground "grey90" :bkacground "red")))
+  '((t (:foreground "grey90" :background "red")))
   "全角ハイフン/マイナスのフェイス"
   :group 'review-faces)
 
