@@ -1,5 +1,5 @@
 ;;; review-mode.el --- major mode for ReVIEW -*- lexical-binding: t -*-
-;; Copyright 2007-2022 Kenshi Muto <kmuto@kmuto.jp>
+;; Copyright 2007-2026 Kenshi Muto <kmuto@kmuto.jp>
 
 ;; Author: Kenshi Muto <kmuto@kmuto.jp>
 ;; URL: https://github.com/kmuto/review-el
@@ -93,7 +93,7 @@
 (declare-function skk-mode "skk-mode")
 (declare-function whitespace-mode "whitespace-mode")
 
-(defconst review-version "1.21"
+(defconst review-version "1.22"
   "Re:VIEWモードバージョン")
 
 ;;;; Custom Variables
