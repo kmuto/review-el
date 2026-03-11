@@ -93,7 +93,7 @@
 (declare-function skk-mode "skk-mode")
 (declare-function whitespace-mode "whitespace-mode")
 
-(defconst review-version "1.22"
+(defconst review-version "1.23"
   "Re:VIEWモードバージョン")
 
 ;;;; Custom Variables
